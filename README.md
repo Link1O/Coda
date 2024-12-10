@@ -32,7 +32,7 @@ Coda is a straightforward and efficient framework for creating Discord bots and 
 2. Navigate to the project directory:  
 
     ```bash
-    cd coda-framework
+    cd coda
     ```  
 
 3. Install the necessary dependencies:  
