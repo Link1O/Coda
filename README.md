@@ -23,28 +23,11 @@ Coda is a straightforward and efficient framework for creating Discord bots and 
 
 
 #### method 2 ( For Rolling Releases )
-1. Clone the repository:  
 
-    ```bash
-    git clone https://github.com/Link1O/coda.git
-    ```  
+```bash
+pip install git+https://github.com/Link1O/Coda.git 
+```
 
-2. Navigate to the project directory:  
-
-    ```bash
-    cd coda
-    ```  
-
-3. Install the necessary dependencies:  
-
-    ```bash
-    pip install -r requirements.txt
-    ```  
-4. Install the framework
-
-    ```bash
-    pip install
-    ```  
 ## Quick Start  
 
 To get your bot operational quickly:
