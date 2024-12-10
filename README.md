@@ -40,7 +40,11 @@ Coda is a straightforward and efficient framework for creating Discord bots and 
     ```bash
     pip install -r requirements.txt
     ```  
+4. Install the framework
 
+    ```bash
+    pip install
+    ```  
 ## Quick Start  
 
 To get your bot operational quickly:
