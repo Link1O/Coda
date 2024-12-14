@@ -39,7 +39,7 @@ To get your bot operational quickly:
 
     bot = Client(prefix="!", token="your-discord-bot-token")
 
-    @bot.command
+    @bot.command()
     async def hello(ctx):
         await ctx.send("Hello, world!")
 
