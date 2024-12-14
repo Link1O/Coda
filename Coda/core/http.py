@@ -60,8 +60,8 @@ class WebSocket_Handler:
                 "intents": self.intents,
                 "properties": {
                     "os": _os_name,
-                    "browser": "Dissonance",
-                    "device": "Dissonance"
+                    "browser": "coda",
+                    "device": "coda"
                 }
             }
         }))
@@ -70,7 +70,7 @@ class WebSocket_Handler:
         await self._initialize()
         await self._create_ws_connection()
         await self._identify()
-        print(f"dissonance: {Fore.GREEN}connected{Fore.RESET} to the{Fore.GREEN} gateway successfully{Fore.RESET} [{datetime.now(UTC).strftime("%Y-%m-%d %H:%M")}]")
+        print(f"coda: {Fore.GREEN}connected{Fore.RESET} to the{Fore.GREEN} gateway successfully{Fore.RESET} [{datetime.now(UTC).strftime("%Y-%m-%d %H:%M")}]")
         await self._cache_client_info()
         if "on_setup" in self._events_tree:
             await self._trigger(self._events_tree["setup"])
@@ -80,7 +80,7 @@ class WebSocket_Handler:
         self._keep_alive_task.cancel()
         await self.ws.close()
         await self._create_ws_connection()
-        print(f"dissonance: {Fore.LIGHTGREEN_EX}reconnected{Fore.RESET} to the{Fore.GREEN} gateway successfully{Fore.RESET} [{datetime.now(UTC).strftime("%Y-%m-%d %H:%M")}]")
+        print(f"coda: {Fore.LIGHTGREEN_EX}reconnected{Fore.RESET} to the{Fore.GREEN} gateway successfully{Fore.RESET} [{datetime.now(UTC).strftime("%Y-%m-%d %H:%M")}]")
 
     async def _resume(self) -> None:
         await self.ws.send_bytes(orjson.dumps({
@@ -91,7 +91,7 @@ class WebSocket_Handler:
                 "seq": self._last_sequence
             }
         }))
-        print(f"dissonance: {Fore.LIGHTGREEN_EX}resumed connection{Fore.RESET} to the{Fore.GREEN} gateway successfully{Fore.RESET} [{datetime.now(UTC).strftime("%Y-%m-%d %H:%M")}]")
+        print(f"coda: {Fore.LIGHTGREEN_EX}resumed connection{Fore.RESET} to the{Fore.GREEN} gateway successfully{Fore.RESET} [{datetime.now(UTC).strftime("%Y-%m-%d %H:%M")}]")
 
     async def _ws_loop(self) -> None:
         async for msg in self.ws:
@@ -118,21 +118,21 @@ class WebSocket_Handler:
                                 if prov_args_count_len in range(req_arg_count, max_arg_count + 1):
                                     await self._trigger(command_data["coro"], handler_base(session=self._session, auth=self._auth, data_tree=data["d"]), *args[1:])
                                 else:
-                                    raise UnSufficientArguments(f"dissonance: not enough arguments passed. Required arguments count: {req_arg_count}"
+                                    raise UnSufficientArguments(f"coda: not enough arguments passed. Required arguments count: {req_arg_count}"
                                     if prov_args_count_len < req_arg_count
-                                    else f"dissonance: arguments limit exceeded. Arguments limit: {max_arg_count}")
+                                    else f"coda: arguments limit exceeded. Arguments limit: {max_arg_count}")
                     if data["t"] == "MESSAGE_DELETE":
                         if "on_message_delete" in self._events_tree:
                             await self._trigger("")
                 elif data["op"] == 7: # Reconnect & resume
                     await self._reconnect_to_ws()
                     await self._resume()
-                    print(f"dissonance: {Fore.GREEN}reconnected & resumed{Fore.RESET} to the {Fore.GREEN} gateway successfully {Fore.RESET} [{datetime.now(UTC).strftime("%Y-%m-%d %H:%M")}]")
+                    print(f"coda: {Fore.GREEN}reconnected & resumed{Fore.RESET} to the {Fore.GREEN} gateway successfully {Fore.RESET} [{datetime.now(UTC).strftime("%Y-%m-%d %H:%M")}]")
                     self.decompresser = zlib.decompressobj()
                     asyncio.create_task(self._ws_loop())
                     return
                 elif data["op"] == 9: # invalid session
-                    print(f"dissonance: {Fore.YELLOW}invalid session")
+                    print(f"coda: {Fore.YELLOW}invalid session")
                     if data["d"]:
                         await self._resume()
                     else:
@@ -145,14 +145,14 @@ class WebSocket_Handler:
                     self._keep_alive_task = asyncio.create_task(self._keep_alive(data.get("d", {}).get("heartbeat_interval") / 1000))
                 elif data["op"] == 11:
                     if self._debug:
-                        print(f"dissonance [debug]:{Fore.LIGHTCYAN_EX} heartbeat{Fore.RESET} was{Fore.GREEN} successful {Fore.RESET} [{datetime.now(UTC).strftime("%Y-%m-%d %H:%M")}]")  
+                        print(f"coda [debug]:{Fore.LIGHTCYAN_EX} heartbeat{Fore.RESET} was{Fore.GREEN} successful {Fore.RESET} [{datetime.now(UTC).strftime("%Y-%m-%d %H:%M")}]")  
                 else:
-                    print(f"dissonance: {Fore.RED}unhandled operation code. ({data["op"]}){Fore.RESET}")
+                    print(f"coda: {Fore.RED}unhandled operation code. ({data["op"]}){Fore.RESET}")
             except ClientConnectionError:
-                print(f"dissonance: {Fore.RED}connection lost!{Fore.RESET} [{datetime.now(UTC).strftime("%Y-%m-%d %H:%M")}]")
+                print(f"coda: {Fore.RED}connection lost!{Fore.RESET} [{datetime.now(UTC).strftime("%Y-%m-%d %H:%M")}]")
                 break
             except Exception as e:
-                print(f"dissonance: {Fore.RED}unexpected error: {e}{Fore.RESET} [{datetime.now(UTC).strftime('%Y-%m-%d %H:%M')}]")
+                print(f"coda: {Fore.RED}unexpected error: {e}{Fore.RESET} [{datetime.now(UTC).strftime('%Y-%m-%d %H:%M')}]")
  
     async def _keep_alive(self, heartbeat_interval: int) -> None:
         while True:
@@ -162,7 +162,7 @@ class WebSocket_Handler:
                 "d": self._last_sequence
             }))
             if self._debug:
-                print(f"dissonance [debug]: Heartbeat{Fore.LIGHTCYAN_EX} sent{Fore.RESET}")
+                print(f"coda [debug]: Heartbeat{Fore.LIGHTCYAN_EX} sent{Fore.RESET}")
 
     async def _fetch_gateway_url(self):
         response = await self._session.get("https://discord.com/api/gateway")
