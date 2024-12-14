@@ -3,7 +3,7 @@ from Coda.core.handler_base import handler_base
 from Coda.core.embed_base import embed_base
 from ..core.constants import *
 import asyncio
-bot = WebSocket_Handler("MTE2NjAxMzg5MTQ0MTA4NjU0Ng.GFIIMz.yXhdqlj1g-jmopbzhwHNF1IAFTK3Gj1NgY6SPk", intents=intents_base.ALL, prefix="h!", debug=True)
+bot = WebSocket_Handler("your-token", intents=intents_base.ALL, prefix="h!", debug=True)
 async def main(): await bot.connect()
 @bot.command("do")
 async def cmd(handler: handler_base, value):
