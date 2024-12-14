@@ -8,7 +8,6 @@ Coda is a straightforward and efficient framework for creating Discord bots and 
 - **Fast JSON Processing**: Utilizes [orjson](https://github.com/ijl/orjson) for speedy JSON encoding and decoding.
 - **Minimal Memory Usage**: Designed to use less RAM compared to other Python-based Discord frameworks.
 - **Optimized for speed**: Ensure your bot runs smoothly and responsively, even on limited resources.
-- **Modular Design**: Supports organizing your bot’s features into separate modules for better clarity and maintainability.
 
 ## Installation  
 
