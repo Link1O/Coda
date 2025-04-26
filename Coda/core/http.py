@@ -29,9 +29,38 @@ class HeartBeats_Handler:
         ...
 
 
+class ShardManager:
+    def __init__(self, token: str, intents: Union[Iterable[intents_base], int], prefix: str, shard_count: int, debug: bool = False):
+        self.token = token
+        self.intents = intents
+        self.prefix = prefix
+        self.shard_count = shard_count
+        self.debug = debug
+        self.shards = []
+
+    async def start(self):
+        for shard_id in range(self.shard_count):
+            shard = WebSocket_Handler(
+                token=self.token,
+                intents=self.intents,
+                prefix=self.prefix,
+                debug=self.debug,
+                shard_id=shard_id,
+                shard_count=self.shard_count
+            )
+            self.shards.append(shard)
+            asyncio.create_task(shard.connect())
+
+    async def stop(self):
+        for shard in self.shards:
+            if shard.ws:
+                await shard.ws.close()
+        print(f"coda: {Fore.RED}All shards stopped.{Fore.RESET}")
+
+
 class WebSocket_Handler:
 
-    def __init__(self, token: str, intents: Union[Iterable[intents_base], int], prefix: str, debug: bool = False, **kwargs) -> None:
+    def __init__(self, token: str, intents: Union[Iterable[intents_base], int], prefix: str, debug: bool = False, shard_id: int = 0, shard_count: int = 1, **kwargs) -> None:
         if isinstance(intents, Iterable):
             self.intents = sum(intent.value for intent in intents)
         else:
@@ -44,6 +73,8 @@ class WebSocket_Handler:
         self.ws = None
         self._events_tree = {}
         self._command_tree = {}
+        self.shard_id = shard_id
+        self.shard_count = shard_count
 
     async def _initialize(self):
         self._session = ClientSession(raise_for_status=True)
@@ -58,6 +89,7 @@ class WebSocket_Handler:
             "d": {
                 "token": self._auth,
                 "intents": self.intents,
+                "shard": [self.shard_id, self.shard_count],
                 "properties": {
                     "os": _os_name,
                     "browser": "coda",
@@ -70,7 +102,7 @@ class WebSocket_Handler:
         await self._initialize()
         await self._create_ws_connection()
         await self._identify()
-        print(f"coda: {Fore.GREEN}connected{Fore.RESET} to the{Fore.GREEN} gateway successfully{Fore.RESET} [{datetime.now(UTC).strftime("%Y-%m-%d %H:%M")}]")
+        print(f"coda: {Fore.GREEN}Shard {self.shard_id}/{self.shard_count}{Fore.RESET} connected to the{Fore.GREEN} gateway successfully{Fore.RESET} [{datetime.now(UTC).strftime('%Y-%m-%d %H:%M')}]")
         await self._cache_client_info()
         if "on_setup" in self._events_tree:
             await self._trigger(self._events_tree["setup"])
@@ -80,7 +112,7 @@ class WebSocket_Handler:
         self._keep_alive_task.cancel()
         await self.ws.close()
         await self._create_ws_connection()
-        print(f"coda: {Fore.LIGHTGREEN_EX}reconnected{Fore.RESET} to the{Fore.GREEN} gateway successfully{Fore.RESET} [{datetime.now(UTC).strftime("%Y-%m-%d %H:%M")}]")
+        print(f"coda: {Fore.LIGHTGREEN_EX}Shard {self.shard_id}/{self.shard_count} reconnected{Fore.RESET} to the{Fore.GREEN} gateway successfully{Fore.RESET} [{datetime.now(UTC).strftime('%Y-%m-%d %H:%M')}]")
 
     async def _resume(self) -> None:
         await self.ws.send_bytes(orjson.dumps({
@@ -91,7 +123,7 @@ class WebSocket_Handler:
                 "seq": self._last_sequence
             }
         }))
-        print(f"coda: {Fore.LIGHTGREEN_EX}resumed connection{Fore.RESET} to the{Fore.GREEN} gateway successfully{Fore.RESET} [{datetime.now(UTC).strftime("%Y-%m-%d %H:%M")}]")
+        print(f"coda: {Fore.LIGHTGREEN_EX}Shard {self.shard_id}/{self.shard_count} resumed connection{Fore.RESET} to the{Fore.GREEN} gateway successfully{Fore.RESET} [{datetime.now(UTC).strftime("%Y-%m-%d %H:%M")}]")
 
     async def _ws_loop(self) -> None:
         async for msg in self.ws:
@@ -127,12 +159,12 @@ class WebSocket_Handler:
                 elif data["op"] == 7: # Reconnect & resume
                     await self._reconnect_to_ws()
                     await self._resume()
-                    print(f"coda: {Fore.GREEN}reconnected & resumed{Fore.RESET} to the {Fore.GREEN} gateway successfully {Fore.RESET} [{datetime.now(UTC).strftime("%Y-%m-%d %H:%M")}]")
+                    print(f"coda: {Fore.GREEN}Shard {self.shard_id}/{self.shard_count} reconnected & resumed{Fore.RESET} to the {Fore.GREEN} gateway successfully {Fore.RESET} [{datetime.now(UTC).strftime("%Y-%m-%d %H:%M")}]")
                     self.decompresser = zlib.decompressobj()
                     asyncio.create_task(self._ws_loop())
                     return
                 elif data["op"] == 9: # invalid session
-                    print(f"coda: {Fore.YELLOW}invalid session")
+                    print(f"coda: {Fore.YELLOW}Shard {self.shard_id}/{self.shard_count} invalid session")
                     if data["d"]:
                         await self._resume()
                     else:
@@ -145,14 +177,14 @@ class WebSocket_Handler:
                     self._keep_alive_task = asyncio.create_task(self._keep_alive(data.get("d", {}).get("heartbeat_interval") / 1000))
                 elif data["op"] == 11:
                     if self._debug:
-                        print(f"coda [debug]:{Fore.LIGHTCYAN_EX} heartbeat{Fore.RESET} was{Fore.GREEN} successful {Fore.RESET} [{datetime.now(UTC).strftime("%Y-%m-%d %H:%M")}]")  
+                        print(f"coda [debug]:{Fore.LIGHTCYAN_EX} Shard {self.shard_id}/{self.shard_count} heartbeat{Fore.RESET} was{Fore.GREEN} successful {Fore.RESET} [{datetime.now(UTC).strftime("%Y-%m-%d %H:%M")}]")  
                 else:
-                    print(f"coda: {Fore.RED}unhandled operation code. ({data["op"]}){Fore.RESET}")
+                    print(f"coda: {Fore.RED}Shard {self.shard_id}/{self.shard_count} unhandled operation code. ({data["op"]}){Fore.RESET}")
             except ClientConnectionError:
-                print(f"coda: {Fore.RED}connection lost!{Fore.RESET} [{datetime.now(UTC).strftime("%Y-%m-%d %H:%M")}]")
+                print(f"coda: {Fore.RED}Shard {self.shard_id}/{self.shard_count} connection lost!{Fore.RESET} [{datetime.now(UTC).strftime("%Y-%m-%d %H:%M")}]")
                 break
             except Exception as e:
-                print(f"coda: {Fore.RED}unexpected error: {e}{Fore.RESET} [{datetime.now(UTC).strftime('%Y-%m-%d %H:%M')}]")
+                print(f"coda: {Fore.RED}Shard {self.shard_id}/{self.shard_count} unexpected error: {e}{Fore.RESET} [{datetime.now(UTC).strftime('%Y-%m-%d %H:%M')}]")
  
     async def _keep_alive(self, heartbeat_interval: int) -> None:
         while True:
@@ -162,7 +194,7 @@ class WebSocket_Handler:
                 "d": self._last_sequence
             }))
             if self._debug:
-                print(f"coda [debug]: Heartbeat{Fore.LIGHTCYAN_EX} sent{Fore.RESET}")
+                print(f"coda [debug]: Shard {self.shard_id}/{self.shard_count} Heartbeat{Fore.LIGHTCYAN_EX} sent{Fore.RESET}")
 
     async def _fetch_gateway_url(self):
         response = await self._session.get("https://discord.com/api/gateway")
