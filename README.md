@@ -36,7 +36,7 @@ To get your bot operational quickly:
     ```python
     from Coda.core.http import WebSocket_Handler
 
-    bot = WebSocket_Handlerfrom(prefix="!", token="your-discord-bot-token")
+    bot = WebSocket_Handler(prefix="!", token="your-discord-bot-token")
 
     @bot.command()
     async def hello(ctx):
