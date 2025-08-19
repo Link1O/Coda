@@ -17,6 +17,7 @@ class handler_base:
             "embeds": ([embed.tree] if embed else [] + [embed_item.tree for embed_item in embeds] if embeds else []),
             "message_reference": {
                 "guild_id": self.guild.id,
+                "channel_id": self.channel.id,
                 "message_id": self.id
             }
         }
