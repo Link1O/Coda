@@ -1,6 +1,6 @@
 import asyncio
 import threading
-from aiohttp import ClientSession, ClientConnectionError
+from aiohttp import ClientSession, ClientConnectionError, WSMsgType
 import zlib
 import orjson
 # from inspect import signature
@@ -38,7 +38,7 @@ class ShardManager:
         self.debug = debug
         self.shards = []
 
-    async def start(self):
+    async def register(self):
         for shard_id in range(self.shard_count):
             shard = WebSocket_Handler(
                 token=self.token,
@@ -49,8 +49,10 @@ class ShardManager:
                 shard_count=self.shard_count
             )
             self.shards.append(shard)
+    async def connect(self, grace_period: int = 3):
+        for shard in self.shards:
             asyncio.create_task(shard.connect())
-
+            await asyncio.sleep(grace_period)
     async def stop(self):
         for shard in self.shards:
             if shard.ws:
@@ -81,7 +83,7 @@ class WebSocket_Handler:
 
     async def _create_ws_connection(self):
         await self._fetch_gateway_url()
-        self.ws = await self._session.ws_connect(f"{self.gateway_url}/?v=10&encoding=json&compress=zlib-stream")
+        self.ws = await self._session.ws_connect(f"{self.gateway_url}/?v=10&encoding=json&compress=zlib-stream", max_msg_size=0)
 
     async def _identify(self):
         await self.ws.send_bytes(orjson.dumps({
@@ -105,7 +107,7 @@ class WebSocket_Handler:
         print(f"coda: {Fore.GREEN}Shard {self.shard_id}/{self.shard_count}{Fore.RESET} connected to the{Fore.GREEN} gateway successfully{Fore.RESET} [{datetime.now(UTC).strftime('%Y-%m-%d %H:%M')}]")
         await self._cache_client_info()
         if "on_setup" in self._events_tree:
-            await self._trigger(self._events_tree["setup"])
+            await self._trigger(self._events_tree["on_setup"])
         await self._ws_loop()
 
     async def _reconnect_to_ws(self) -> None:
@@ -128,7 +130,13 @@ class WebSocket_Handler:
     async def _ws_loop(self) -> None:
         async for msg in self.ws:
             try:
-                data: dict = orjson.loads(self.decompresser.decompress(msg.data))
+                if msg.type == WSMsgType.BINARY:
+                    data: dict = orjson.loads(self.decompresser.decompress(msg.data))
+                elif msg.type == WSMsgType.TEXT:
+                    data: dict = orjson.loads(msg.data)  # if you request no compression
+                elif msg.type == WSMsgType.ERROR:
+                    print(f"coda: {Fore.RED}Shard {self.shard_id}/{self.shard_count} websocket error: {msg.data}{Fore.RESET}")
+                    break
                 if data["op"] == 0: # Dispatch
                     self._last_sequence = data['s']
                     if data["t"] == "READY":
