@@ -1,8 +1,7 @@
-from Coda.core.http import ShardManager
+from Coda.core.sharding import ShardManager
 from Coda.core.handler_base import handler_base
 from Coda.core.constants import *
 import asyncio
-
 shard_manager = ShardManager(
     "MTE1NTkwMTM1NDAzMjc1ODk0Nw.G4TCrP.KL-Kj7VwwiI7LfeLlAU4vbLgLF_2E6lJ7B9IuE",
     intents=intents_base.ALL,
@@ -10,7 +9,6 @@ shard_manager = ShardManager(
     shard_count=3,
     debug=True
 )
-
 async def main():
     await shard_manager.register()
     def bind_handlers(shard):
