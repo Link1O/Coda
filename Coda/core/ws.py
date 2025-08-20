@@ -28,6 +28,11 @@ class HeartBeats_Handler:
 
 
 class ShardManager:
+    """
+    WARNING:
+    this is the python fallback for the Cython sharding implementation, it is recommended to only use this when faced with compatibillity issues or if it is
+    general preference.
+    """
     def __init__(self, token: str, intents: Union[Iterable[intents_base], int], prefix: str, shard_count: int, debug: bool = False):
         self.token = token
         self.intents = intents
@@ -38,6 +43,7 @@ class ShardManager:
         self._session = None
 
     async def register(self):
+        print(f"{Fore.RED}the python fallback for the Cython sharding implementation is being run.{Fore.RESET}")
         if not self._session:
             self._session = ClientSession(raise_for_status=True)
         for shard_id in range(self.shard_count):
