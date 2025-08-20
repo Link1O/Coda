@@ -3,7 +3,7 @@ from Coda.core.handler_base import handler_base
 from Coda.core.constants import *
 import asyncio
 shard_manager = ShardManager(
-    "MTE1NTkwMTM1NDAzMjc1ODk0Nw.G4TCrP.KL-Kj7VwwiI7LfeLlAU4vbLgLF_2E6lJ7B9IuE",
+    "MTE1NTkwMTM1NDAzMjc1ODk0Nw.G4TCrP.KL-Kj7VwwiI7LfeLlAU4vbLgLF_2E6lJ7B9IuE", # your token, should look like this
     intents=intents_base.ALL,
     prefix="h!",
     shard_count=3,
