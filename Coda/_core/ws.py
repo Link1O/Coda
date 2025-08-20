@@ -164,8 +164,8 @@ class WebSocket_Handler:
                             command_data = self._command_tree.get(cmd)
                             if command_data:
                                 args = rest[0].split(" ") if rest else []
-                                req_arg_count = command_data["required_arguments_count"]
-                                max_arg_count = command_data["arguments_sum"]
+                                req_arg_count = command_data["required_arguments_count"] - 1
+                                max_arg_count = command_data["arguments_sum"] - 1
                                 prov_args_count_len = len(args)
                                 if prov_args_count_len in range(req_arg_count, max_arg_count + 1):
                                     await self._trigger(
