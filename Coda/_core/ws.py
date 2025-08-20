@@ -31,7 +31,7 @@ class ShardManager:
     """
     WARNING:
     this is the python fallback for the Cython sharding implementation, it is recommended to only use this when faced with compatibillity issues or if it is
-    general preference.
+    general preference because it's most likely few features behind.
     """
     def __init__(self, token: str, intents: Union[Iterable[intents_base], int], prefix: str, shard_count: int, debug: bool = False, compress: bool = True):
         self.token = token
