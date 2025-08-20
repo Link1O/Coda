@@ -52,7 +52,7 @@ class ShardManager:
                 token=self.token,
                 intents=self.intents,
                 prefix=self.prefix,
-                debug=self.debug,
+                debug=self._debug,
                 compress=self._compress,
                 _shard_id=shard_id,
                 _shard_count=self.shard_count,
