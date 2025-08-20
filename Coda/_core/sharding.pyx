@@ -10,14 +10,16 @@ cdef class ShardManager:
     cdef public str token, prefix
     cdef public object intents, shards, _session
     cdef public int shard_count
-    cdef public bint debug  
+    cdef public bint _debug
+    cdef public bint _compress
 
-    def __init__(self, token: str, intents: Union[Iterable, int], prefix: str, shard_count: int, debug: bool = False):
+    def __init__(self, token: str, intents: Union[Iterable, int], prefix: str, shard_count: int, debug: bool = False, compress: bool = True):
         self.token = token
         self.intents = intents
         self.prefix = prefix
         self.shard_count = shard_count
-        self.debug = debug
+        self._debug = debug
+        self._compress = compress
         self.shards = []
         self._session = None
 
@@ -29,9 +31,10 @@ cdef class ShardManager:
                 token=self.token,
                 intents=self.intents,
                 prefix=self.prefix,
-                debug=self.debug,
-                shard_id=shard_id,
-                shard_count=self.shard_count,
+                debug=self._debug,
+                compress=self._compress,
+                _shard_id=shard_id,
+                _shard_count=self.shard_count,
                 _session=self._session
             )
             self.shards.append(shard)

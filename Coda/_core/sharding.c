@@ -993,11 +993,12 @@ struct __pyx_obj_8sharding_ShardManager {
   PyObject *shards;
   PyObject *_session;
   int shard_count;
-  int debug;
+  int _debug;
+  int _compress;
 };
 
 
-/* "sharding.pyx":24
+/* "sharding.pyx":26
  *         self._session = None
  * 
  *     async def register(self):             # <<<<<<<<<<<<<<
@@ -1012,7 +1013,7 @@ struct __pyx_obj_8sharding___pyx_scope_struct__register {
 };
 
 
-/* "sharding.pyx":39
+/* "sharding.pyx":42
  *             self.shards.append(shard)
  * 
  *     async def connect(self, grace_period: int = 3):             # <<<<<<<<<<<<<<
@@ -1030,7 +1031,7 @@ struct __pyx_obj_8sharding___pyx_scope_struct_1_connect {
 };
 
 
-/* "sharding.pyx":43
+/* "sharding.pyx":46
  *             asyncio.create_task(shard.connect())
  *             await asyncio.sleep(grace_period)
  *     async def stop(self):             # <<<<<<<<<<<<<<
@@ -1652,11 +1653,12 @@ static const char __pyx_k_intents[] = "intents";
 static const char __pyx_k_session[] = "_session";
 static const char __pyx_k_Iterable[] = "Iterable";
 static const char __pyx_k_colorama[] = "colorama";
+static const char __pyx_k_compress[] = "compress";
 static const char __pyx_k_getstate[] = "__getstate__";
 static const char __pyx_k_pyx_type[] = "__pyx_type";
 static const char __pyx_k_register[] = "register";
 static const char __pyx_k_setstate[] = "__setstate__";
-static const char __pyx_k_shard_id[] = "shard_id";
+static const char __pyx_k_shard_id[] = "_shard_id";
 static const char __pyx_k_sharding[] = "sharding";
 static const char __pyx_k_pyx_state[] = "__pyx_state";
 static const char __pyx_k_reduce_ex[] = "__reduce_ex__";
@@ -1671,6 +1673,7 @@ static const char __pyx_k_stringsource[] = "stringsource";
 static const char __pyx_k_ClientSession[] = "ClientSession";
 static const char __pyx_k_asyncio_tasks[] = "asyncio.tasks";
 static const char __pyx_k_reduce_cython[] = "__reduce_cython__";
+static const char __pyx_k_shard_count_2[] = "_shard_count";
 static const char __pyx_k_pyx_PickleError[] = "__pyx_PickleError";
 static const char __pyx_k_setstate_cython[] = "__setstate_cython__";
 static const char __pyx_k_raise_for_status[] = "raise_for_status";
@@ -1682,7 +1685,7 @@ static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
 static const char __pyx_k_ShardManager_connect[] = "ShardManager.connect";
 static const char __pyx_k_ShardManager_register[] = "ShardManager.register";
 static const char __pyx_k_pyx_unpickle_ShardManager[] = "__pyx_unpickle_ShardManager";
-static const char __pyx_k_Incompatible_checksums_0x_x_vs_0[] = "Incompatible checksums (0x%x vs (0x72c75ad, 0x703eccc, 0x37673e1) = (_session, debug, intents, prefix, shard_count, shards, token))";
+static const char __pyx_k_Incompatible_checksums_0x_x_vs_0[] = "Incompatible checksums (0x%x vs (0x25bb36c, 0x633096e, 0xfcafcec) = (_compress, _debug, _session, intents, prefix, shard_count, shards, token))";
 static PyObject *__pyx_kp_u_All_shards_stopped;
 static PyObject *__pyx_n_s_ClientSession;
 static PyObject *__pyx_n_s_Fore;
@@ -1708,6 +1711,7 @@ static PyObject *__pyx_n_s_cline_in_traceback;
 static PyObject *__pyx_n_s_close;
 static PyObject *__pyx_kp_u_coda;
 static PyObject *__pyx_n_s_colorama;
+static PyObject *__pyx_n_s_compress;
 static PyObject *__pyx_n_s_connect;
 static PyObject *__pyx_n_s_create_task;
 static PyObject *__pyx_n_s_debug;
@@ -1740,6 +1744,7 @@ static PyObject *__pyx_n_s_session;
 static PyObject *__pyx_n_s_setstate;
 static PyObject *__pyx_n_s_setstate_cython;
 static PyObject *__pyx_n_s_shard_count;
+static PyObject *__pyx_n_s_shard_count_2;
 static PyObject *__pyx_n_s_shard_id;
 static PyObject *__pyx_n_s_sharding;
 static PyObject *__pyx_n_s_sleep;
@@ -1751,7 +1756,7 @@ static PyObject *__pyx_n_s_token;
 static PyObject *__pyx_n_s_typing;
 static PyObject *__pyx_n_s_update;
 static PyObject *__pyx_n_s_ws;
-static int __pyx_pf_8sharding_12ShardManager___init__(struct __pyx_obj_8sharding_ShardManager *__pyx_v_self, PyObject *__pyx_v_token, PyObject *__pyx_v_intents, PyObject *__pyx_v_prefix, PyObject *__pyx_v_shard_count, PyObject *__pyx_v_debug); /* proto */
+static int __pyx_pf_8sharding_12ShardManager___init__(struct __pyx_obj_8sharding_ShardManager *__pyx_v_self, PyObject *__pyx_v_token, PyObject *__pyx_v_intents, PyObject *__pyx_v_prefix, PyObject *__pyx_v_shard_count, PyObject *__pyx_v_debug, PyObject *__pyx_v_compress); /* proto */
 static PyObject *__pyx_pf_8sharding_12ShardManager_2register(struct __pyx_obj_8sharding_ShardManager *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_8sharding_12ShardManager_5connect(struct __pyx_obj_8sharding_ShardManager *__pyx_v_self, PyObject *__pyx_v_grace_period); /* proto */
 static PyObject *__pyx_pf_8sharding_12ShardManager_8stop(struct __pyx_obj_8sharding_ShardManager *__pyx_v_self); /* proto */
@@ -1772,8 +1777,10 @@ static int __pyx_pf_8sharding_12ShardManager_8_session_2__set__(struct __pyx_obj
 static int __pyx_pf_8sharding_12ShardManager_8_session_4__del__(struct __pyx_obj_8sharding_ShardManager *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_8sharding_12ShardManager_11shard_count___get__(struct __pyx_obj_8sharding_ShardManager *__pyx_v_self); /* proto */
 static int __pyx_pf_8sharding_12ShardManager_11shard_count_2__set__(struct __pyx_obj_8sharding_ShardManager *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
-static PyObject *__pyx_pf_8sharding_12ShardManager_5debug___get__(struct __pyx_obj_8sharding_ShardManager *__pyx_v_self); /* proto */
-static int __pyx_pf_8sharding_12ShardManager_5debug_2__set__(struct __pyx_obj_8sharding_ShardManager *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
+static PyObject *__pyx_pf_8sharding_12ShardManager_6_debug___get__(struct __pyx_obj_8sharding_ShardManager *__pyx_v_self); /* proto */
+static int __pyx_pf_8sharding_12ShardManager_6_debug_2__set__(struct __pyx_obj_8sharding_ShardManager *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
+static PyObject *__pyx_pf_8sharding_12ShardManager_9_compress___get__(struct __pyx_obj_8sharding_ShardManager *__pyx_v_self); /* proto */
+static int __pyx_pf_8sharding_12ShardManager_9_compress_2__set__(struct __pyx_obj_8sharding_ShardManager *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
 static PyObject *__pyx_pf_8sharding_12ShardManager_11__reduce_cython__(struct __pyx_obj_8sharding_ShardManager *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_8sharding_12ShardManager_13__setstate_cython__(struct __pyx_obj_8sharding_ShardManager *__pyx_v_self, PyObject *__pyx_v___pyx_state); /* proto */
 static PyObject *__pyx_pf_8sharding___pyx_unpickle_ShardManager(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v___pyx_type, long __pyx_v___pyx_checksum, PyObject *__pyx_v___pyx_state); /* proto */
@@ -1782,18 +1789,18 @@ static PyObject *__pyx_tp_new_8sharding___pyx_scope_struct__register(PyTypeObjec
 static PyObject *__pyx_tp_new_8sharding___pyx_scope_struct_1_connect(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_tp_new_8sharding___pyx_scope_struct_2_stop(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_int_3;
-static PyObject *__pyx_int_58094561;
-static PyObject *__pyx_int_117697740;
-static PyObject *__pyx_int_120354221;
+static PyObject *__pyx_int_39564140;
+static PyObject *__pyx_int_104008046;
+static PyObject *__pyx_int_264961260;
 static PyObject *__pyx_tuple_;
 static PyObject *__pyx_tuple__2;
 static PyObject *__pyx_codeobj__3;
 /* Late includes */
 
-/* "sharding.pyx":15
- *     cdef public bint debug
+/* "sharding.pyx":16
+ *     cdef public bint _compress
  * 
- *     def __init__(self, token: str, intents: Union[Iterable, int], prefix: str, shard_count: int, debug: bool = False):             # <<<<<<<<<<<<<<
+ *     def __init__(self, token: str, intents: Union[Iterable, int], prefix: str, shard_count: int, debug: bool = False, compress: bool = True):             # <<<<<<<<<<<<<<
  *         self.token = token
  *         self.intents = intents
  */
@@ -1806,6 +1813,7 @@ static int __pyx_pw_8sharding_12ShardManager_1__init__(PyObject *__pyx_v_self, P
   PyObject *__pyx_v_prefix = 0;
   PyObject *__pyx_v_shard_count = 0;
   PyObject *__pyx_v_debug = 0;
+  PyObject *__pyx_v_compress = 0;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -1813,13 +1821,16 @@ static int __pyx_pw_8sharding_12ShardManager_1__init__(PyObject *__pyx_v_self, P
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__init__ (wrapper)", 0);
   {
-    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_token,&__pyx_n_s_intents,&__pyx_n_s_prefix,&__pyx_n_s_shard_count,&__pyx_n_s_debug,0};
-    PyObject* values[5] = {0,0,0,0,0};
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_token,&__pyx_n_s_intents,&__pyx_n_s_prefix,&__pyx_n_s_shard_count,&__pyx_n_s_debug,&__pyx_n_s_compress,0};
+    PyObject* values[6] = {0,0,0,0,0,0};
     values[4] = ((PyObject *)Py_False);
+    values[5] = ((PyObject *)Py_True);
     if (unlikely(__pyx_kwds)) {
       Py_ssize_t kw_args;
       const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
       switch (pos_args) {
+        case  6: values[5] = PyTuple_GET_ITEM(__pyx_args, 5);
+        CYTHON_FALLTHROUGH;
         case  5: values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
         CYTHON_FALLTHROUGH;
         case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
@@ -1842,19 +1853,19 @@ static int __pyx_pw_8sharding_12ShardManager_1__init__(PyObject *__pyx_v_self, P
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_intents)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 0, 4, 5, 1); __PYX_ERR(0, 15, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__init__", 0, 4, 6, 1); __PYX_ERR(0, 16, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_prefix)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 0, 4, 5, 2); __PYX_ERR(0, 15, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__init__", 0, 4, 6, 2); __PYX_ERR(0, 16, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_shard_count)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 0, 4, 5, 3); __PYX_ERR(0, 15, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__init__", 0, 4, 6, 3); __PYX_ERR(0, 16, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  4:
@@ -1862,12 +1873,20 @@ static int __pyx_pw_8sharding_12ShardManager_1__init__(PyObject *__pyx_v_self, P
           PyObject* value = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_debug);
           if (value) { values[4] = value; kw_args--; }
         }
+        CYTHON_FALLTHROUGH;
+        case  5:
+        if (kw_args > 0) {
+          PyObject* value = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_compress);
+          if (value) { values[5] = value; kw_args--; }
+        }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) __PYX_ERR(0, 15, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) __PYX_ERR(0, 16, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
+        case  6: values[5] = PyTuple_GET_ITEM(__pyx_args, 5);
+        CYTHON_FALLTHROUGH;
         case  5: values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
         CYTHON_FALLTHROUGH;
         case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
@@ -1883,18 +1902,19 @@ static int __pyx_pw_8sharding_12ShardManager_1__init__(PyObject *__pyx_v_self, P
     __pyx_v_prefix = ((PyObject*)values[2]);
     __pyx_v_shard_count = values[3];
     __pyx_v_debug = values[4];
+    __pyx_v_compress = values[5];
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__init__", 0, 4, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 15, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("__init__", 0, 4, 6, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 16, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("sharding.ShardManager.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return -1;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_token), (&PyUnicode_Type), 1, "token", 1))) __PYX_ERR(0, 15, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_prefix), (&PyUnicode_Type), 1, "prefix", 1))) __PYX_ERR(0, 15, __pyx_L1_error)
-  __pyx_r = __pyx_pf_8sharding_12ShardManager___init__(((struct __pyx_obj_8sharding_ShardManager *)__pyx_v_self), __pyx_v_token, __pyx_v_intents, __pyx_v_prefix, __pyx_v_shard_count, __pyx_v_debug);
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_token), (&PyUnicode_Type), 1, "token", 1))) __PYX_ERR(0, 16, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_prefix), (&PyUnicode_Type), 1, "prefix", 1))) __PYX_ERR(0, 16, __pyx_L1_error)
+  __pyx_r = __pyx_pf_8sharding_12ShardManager___init__(((struct __pyx_obj_8sharding_ShardManager *)__pyx_v_self), __pyx_v_token, __pyx_v_intents, __pyx_v_prefix, __pyx_v_shard_count, __pyx_v_debug, __pyx_v_compress);
 
   /* function exit code */
   goto __pyx_L0;
@@ -1905,7 +1925,7 @@ static int __pyx_pw_8sharding_12ShardManager_1__init__(PyObject *__pyx_v_self, P
   return __pyx_r;
 }
 
-static int __pyx_pf_8sharding_12ShardManager___init__(struct __pyx_obj_8sharding_ShardManager *__pyx_v_self, PyObject *__pyx_v_token, PyObject *__pyx_v_intents, PyObject *__pyx_v_prefix, PyObject *__pyx_v_shard_count, PyObject *__pyx_v_debug) {
+static int __pyx_pf_8sharding_12ShardManager___init__(struct __pyx_obj_8sharding_ShardManager *__pyx_v_self, PyObject *__pyx_v_token, PyObject *__pyx_v_intents, PyObject *__pyx_v_prefix, PyObject *__pyx_v_shard_count, PyObject *__pyx_v_debug, PyObject *__pyx_v_compress) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
@@ -1916,9 +1936,9 @@ static int __pyx_pf_8sharding_12ShardManager___init__(struct __pyx_obj_8sharding
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__init__", 0);
 
-  /* "sharding.pyx":16
+  /* "sharding.pyx":17
  * 
- *     def __init__(self, token: str, intents: Union[Iterable, int], prefix: str, shard_count: int, debug: bool = False):
+ *     def __init__(self, token: str, intents: Union[Iterable, int], prefix: str, shard_count: int, debug: bool = False, compress: bool = True):
  *         self.token = token             # <<<<<<<<<<<<<<
  *         self.intents = intents
  *         self.prefix = prefix
@@ -1929,8 +1949,8 @@ static int __pyx_pf_8sharding_12ShardManager___init__(struct __pyx_obj_8sharding
   __Pyx_DECREF(__pyx_v_self->token);
   __pyx_v_self->token = __pyx_v_token;
 
-  /* "sharding.pyx":17
- *     def __init__(self, token: str, intents: Union[Iterable, int], prefix: str, shard_count: int, debug: bool = False):
+  /* "sharding.pyx":18
+ *     def __init__(self, token: str, intents: Union[Iterable, int], prefix: str, shard_count: int, debug: bool = False, compress: bool = True):
  *         self.token = token
  *         self.intents = intents             # <<<<<<<<<<<<<<
  *         self.prefix = prefix
@@ -1942,12 +1962,12 @@ static int __pyx_pf_8sharding_12ShardManager___init__(struct __pyx_obj_8sharding
   __Pyx_DECREF(__pyx_v_self->intents);
   __pyx_v_self->intents = __pyx_v_intents;
 
-  /* "sharding.pyx":18
+  /* "sharding.pyx":19
  *         self.token = token
  *         self.intents = intents
  *         self.prefix = prefix             # <<<<<<<<<<<<<<
  *         self.shard_count = shard_count
- *         self.debug = debug
+ *         self._debug = debug
  */
   __Pyx_INCREF(__pyx_v_prefix);
   __Pyx_GIVEREF(__pyx_v_prefix);
@@ -1955,34 +1975,44 @@ static int __pyx_pf_8sharding_12ShardManager___init__(struct __pyx_obj_8sharding
   __Pyx_DECREF(__pyx_v_self->prefix);
   __pyx_v_self->prefix = __pyx_v_prefix;
 
-  /* "sharding.pyx":19
+  /* "sharding.pyx":20
  *         self.intents = intents
  *         self.prefix = prefix
  *         self.shard_count = shard_count             # <<<<<<<<<<<<<<
- *         self.debug = debug
- *         self.shards = []
+ *         self._debug = debug
+ *         self._compress = compress
  */
-  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_shard_count); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 19, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_As_int(__pyx_v_shard_count); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 20, __pyx_L1_error)
   __pyx_v_self->shard_count = __pyx_t_1;
 
-  /* "sharding.pyx":20
+  /* "sharding.pyx":21
  *         self.prefix = prefix
  *         self.shard_count = shard_count
- *         self.debug = debug             # <<<<<<<<<<<<<<
+ *         self._debug = debug             # <<<<<<<<<<<<<<
+ *         self._compress = compress
+ *         self.shards = []
+ */
+  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_v_debug); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 21, __pyx_L1_error)
+  __pyx_v_self->_debug = __pyx_t_2;
+
+  /* "sharding.pyx":22
+ *         self.shard_count = shard_count
+ *         self._debug = debug
+ *         self._compress = compress             # <<<<<<<<<<<<<<
  *         self.shards = []
  *         self._session = None
  */
-  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_v_debug); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 20, __pyx_L1_error)
-  __pyx_v_self->debug = __pyx_t_2;
+  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_v_compress); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 22, __pyx_L1_error)
+  __pyx_v_self->_compress = __pyx_t_2;
 
-  /* "sharding.pyx":21
- *         self.shard_count = shard_count
- *         self.debug = debug
+  /* "sharding.pyx":23
+ *         self._debug = debug
+ *         self._compress = compress
  *         self.shards = []             # <<<<<<<<<<<<<<
  *         self._session = None
  * 
  */
-  __pyx_t_3 = PyList_New(0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 21, __pyx_L1_error)
+  __pyx_t_3 = PyList_New(0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 23, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_GIVEREF(__pyx_t_3);
   __Pyx_GOTREF(__pyx_v_self->shards);
@@ -1990,8 +2020,8 @@ static int __pyx_pf_8sharding_12ShardManager___init__(struct __pyx_obj_8sharding
   __pyx_v_self->shards = __pyx_t_3;
   __pyx_t_3 = 0;
 
-  /* "sharding.pyx":22
- *         self.debug = debug
+  /* "sharding.pyx":24
+ *         self._compress = compress
  *         self.shards = []
  *         self._session = None             # <<<<<<<<<<<<<<
  * 
@@ -2003,10 +2033,10 @@ static int __pyx_pf_8sharding_12ShardManager___init__(struct __pyx_obj_8sharding
   __Pyx_DECREF(__pyx_v_self->_session);
   __pyx_v_self->_session = Py_None;
 
-  /* "sharding.pyx":15
- *     cdef public bint debug
+  /* "sharding.pyx":16
+ *     cdef public bint _compress
  * 
- *     def __init__(self, token: str, intents: Union[Iterable, int], prefix: str, shard_count: int, debug: bool = False):             # <<<<<<<<<<<<<<
+ *     def __init__(self, token: str, intents: Union[Iterable, int], prefix: str, shard_count: int, debug: bool = False, compress: bool = True):             # <<<<<<<<<<<<<<
  *         self.token = token
  *         self.intents = intents
  */
@@ -2024,7 +2054,7 @@ static int __pyx_pf_8sharding_12ShardManager___init__(struct __pyx_obj_8sharding
 }
 static PyObject *__pyx_gb_8sharding_12ShardManager_4generator(__pyx_CoroutineObject *__pyx_generator, CYTHON_UNUSED PyThreadState *__pyx_tstate, PyObject *__pyx_sent_value); /* proto */
 
-/* "sharding.pyx":24
+/* "sharding.pyx":26
  *         self._session = None
  * 
  *     async def register(self):             # <<<<<<<<<<<<<<
@@ -2057,7 +2087,7 @@ static PyObject *__pyx_pf_8sharding_12ShardManager_2register(struct __pyx_obj_8s
   if (unlikely(!__pyx_cur_scope)) {
     __pyx_cur_scope = ((struct __pyx_obj_8sharding___pyx_scope_struct__register *)Py_None);
     __Pyx_INCREF(Py_None);
-    __PYX_ERR(0, 24, __pyx_L1_error)
+    __PYX_ERR(0, 26, __pyx_L1_error)
   } else {
     __Pyx_GOTREF(__pyx_cur_scope);
   }
@@ -2065,7 +2095,7 @@ static PyObject *__pyx_pf_8sharding_12ShardManager_2register(struct __pyx_obj_8s
   __Pyx_INCREF((PyObject *)__pyx_cur_scope->__pyx_v_self);
   __Pyx_GIVEREF((PyObject *)__pyx_cur_scope->__pyx_v_self);
   {
-    __pyx_CoroutineObject *gen = __Pyx_Coroutine_New((__pyx_coroutine_body_t) __pyx_gb_8sharding_12ShardManager_4generator, NULL, (PyObject *) __pyx_cur_scope, __pyx_n_s_register, __pyx_n_s_ShardManager_register, __pyx_n_s_sharding); if (unlikely(!gen)) __PYX_ERR(0, 24, __pyx_L1_error)
+    __pyx_CoroutineObject *gen = __Pyx_Coroutine_New((__pyx_coroutine_body_t) __pyx_gb_8sharding_12ShardManager_4generator, NULL, (PyObject *) __pyx_cur_scope, __pyx_n_s_register, __pyx_n_s_ShardManager_register, __pyx_n_s_sharding); if (unlikely(!gen)) __PYX_ERR(0, 26, __pyx_L1_error)
     __Pyx_DECREF(__pyx_cur_scope);
     __Pyx_RefNannyFinishContext();
     return (PyObject *) gen;
@@ -2106,9 +2136,9 @@ static PyObject *__pyx_gb_8sharding_12ShardManager_4generator(__pyx_CoroutineObj
     return NULL;
   }
   __pyx_L3_first_run:;
-  if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 24, __pyx_L1_error)
+  if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 26, __pyx_L1_error)
 
-  /* "sharding.pyx":25
+  /* "sharding.pyx":27
  * 
  *     async def register(self):
  *         if self._session is None:             # <<<<<<<<<<<<<<
@@ -2119,19 +2149,19 @@ static PyObject *__pyx_gb_8sharding_12ShardManager_4generator(__pyx_CoroutineObj
   __pyx_t_2 = (__pyx_t_1 != 0);
   if (__pyx_t_2) {
 
-    /* "sharding.pyx":26
+    /* "sharding.pyx":28
  *     async def register(self):
  *         if self._session is None:
  *             self._session = ClientSession(raise_for_status=True)             # <<<<<<<<<<<<<<
  *         for shard_id in range(self.shard_count):
  *             shard = WebSocket_Handler(
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_ClientSession); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 26, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_ClientSession); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 28, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_4 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 26, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 28, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_raise_for_status, Py_True) < 0) __PYX_ERR(0, 26, __pyx_L1_error)
-    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_empty_tuple, __pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 26, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_raise_for_status, Py_True) < 0) __PYX_ERR(0, 28, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_empty_tuple, __pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 28, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
@@ -2141,7 +2171,7 @@ static PyObject *__pyx_gb_8sharding_12ShardManager_4generator(__pyx_CoroutineObj
     __pyx_cur_scope->__pyx_v_self->_session = __pyx_t_5;
     __pyx_t_5 = 0;
 
-    /* "sharding.pyx":25
+    /* "sharding.pyx":27
  * 
  *     async def register(self):
  *         if self._session is None:             # <<<<<<<<<<<<<<
@@ -2150,7 +2180,7 @@ static PyObject *__pyx_gb_8sharding_12ShardManager_4generator(__pyx_CoroutineObj
  */
   }
 
-  /* "sharding.pyx":27
+  /* "sharding.pyx":29
  *         if self._session is None:
  *             self._session = ClientSession(raise_for_status=True)
  *         for shard_id in range(self.shard_count):             # <<<<<<<<<<<<<<
@@ -2162,98 +2192,110 @@ static PyObject *__pyx_gb_8sharding_12ShardManager_4generator(__pyx_CoroutineObj
   for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
     __pyx_cur_scope->__pyx_v_shard_id = __pyx_t_8;
 
-    /* "sharding.pyx":28
+    /* "sharding.pyx":30
  *             self._session = ClientSession(raise_for_status=True)
  *         for shard_id in range(self.shard_count):
  *             shard = WebSocket_Handler(             # <<<<<<<<<<<<<<
  *                 token=self.token,
  *                 intents=self.intents,
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_WebSocket_Handler); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 28, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_WebSocket_Handler); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 30, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
 
-    /* "sharding.pyx":29
+    /* "sharding.pyx":31
  *         for shard_id in range(self.shard_count):
  *             shard = WebSocket_Handler(
  *                 token=self.token,             # <<<<<<<<<<<<<<
  *                 intents=self.intents,
  *                 prefix=self.prefix,
  */
-    __pyx_t_4 = __Pyx_PyDict_NewPresized(7); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 29, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyDict_NewPresized(8); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 31, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_token, __pyx_cur_scope->__pyx_v_self->token) < 0) __PYX_ERR(0, 29, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_token, __pyx_cur_scope->__pyx_v_self->token) < 0) __PYX_ERR(0, 31, __pyx_L1_error)
 
-    /* "sharding.pyx":30
+    /* "sharding.pyx":32
  *             shard = WebSocket_Handler(
  *                 token=self.token,
  *                 intents=self.intents,             # <<<<<<<<<<<<<<
  *                 prefix=self.prefix,
- *                 debug=self.debug,
+ *                 debug=self._debug,
  */
-    if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_intents, __pyx_cur_scope->__pyx_v_self->intents) < 0) __PYX_ERR(0, 29, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_intents, __pyx_cur_scope->__pyx_v_self->intents) < 0) __PYX_ERR(0, 31, __pyx_L1_error)
 
-    /* "sharding.pyx":31
+    /* "sharding.pyx":33
  *                 token=self.token,
  *                 intents=self.intents,
  *                 prefix=self.prefix,             # <<<<<<<<<<<<<<
- *                 debug=self.debug,
- *                 shard_id=shard_id,
+ *                 debug=self._debug,
+ *                 compress=self._compress,
  */
-    if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_prefix, __pyx_cur_scope->__pyx_v_self->prefix) < 0) __PYX_ERR(0, 29, __pyx_L1_error)
-
-    /* "sharding.pyx":32
- *                 intents=self.intents,
- *                 prefix=self.prefix,
- *                 debug=self.debug,             # <<<<<<<<<<<<<<
- *                 shard_id=shard_id,
- *                 shard_count=self.shard_count,
- */
-    __pyx_t_3 = __Pyx_PyBool_FromLong(__pyx_cur_scope->__pyx_v_self->debug); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 32, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-    if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_debug, __pyx_t_3) < 0) __PYX_ERR(0, 29, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-
-    /* "sharding.pyx":33
- *                 prefix=self.prefix,
- *                 debug=self.debug,
- *                 shard_id=shard_id,             # <<<<<<<<<<<<<<
- *                 shard_count=self.shard_count,
- *                 _session=self._session
- */
-    __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_cur_scope->__pyx_v_shard_id); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 33, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-    if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_shard_id, __pyx_t_3) < 0) __PYX_ERR(0, 29, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_prefix, __pyx_cur_scope->__pyx_v_self->prefix) < 0) __PYX_ERR(0, 31, __pyx_L1_error)
 
     /* "sharding.pyx":34
- *                 debug=self.debug,
- *                 shard_id=shard_id,
- *                 shard_count=self.shard_count,             # <<<<<<<<<<<<<<
- *                 _session=self._session
- *             )
+ *                 intents=self.intents,
+ *                 prefix=self.prefix,
+ *                 debug=self._debug,             # <<<<<<<<<<<<<<
+ *                 compress=self._compress,
+ *                 _shard_id=shard_id,
  */
-    __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_cur_scope->__pyx_v_self->shard_count); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 34, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyBool_FromLong(__pyx_cur_scope->__pyx_v_self->_debug); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 34, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_shard_count, __pyx_t_3) < 0) __PYX_ERR(0, 29, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_debug, __pyx_t_3) < 0) __PYX_ERR(0, 31, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
     /* "sharding.pyx":35
- *                 shard_id=shard_id,
- *                 shard_count=self.shard_count,
+ *                 prefix=self.prefix,
+ *                 debug=self._debug,
+ *                 compress=self._compress,             # <<<<<<<<<<<<<<
+ *                 _shard_id=shard_id,
+ *                 _shard_count=self.shard_count,
+ */
+    __pyx_t_3 = __Pyx_PyBool_FromLong(__pyx_cur_scope->__pyx_v_self->_compress); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 35, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_compress, __pyx_t_3) < 0) __PYX_ERR(0, 31, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+
+    /* "sharding.pyx":36
+ *                 debug=self._debug,
+ *                 compress=self._compress,
+ *                 _shard_id=shard_id,             # <<<<<<<<<<<<<<
+ *                 _shard_count=self.shard_count,
+ *                 _session=self._session
+ */
+    __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_cur_scope->__pyx_v_shard_id); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 36, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_shard_id, __pyx_t_3) < 0) __PYX_ERR(0, 31, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+
+    /* "sharding.pyx":37
+ *                 compress=self._compress,
+ *                 _shard_id=shard_id,
+ *                 _shard_count=self.shard_count,             # <<<<<<<<<<<<<<
+ *                 _session=self._session
+ *             )
+ */
+    __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_cur_scope->__pyx_v_self->shard_count); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 37, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_shard_count_2, __pyx_t_3) < 0) __PYX_ERR(0, 31, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+
+    /* "sharding.pyx":38
+ *                 _shard_id=shard_id,
+ *                 _shard_count=self.shard_count,
  *                 _session=self._session             # <<<<<<<<<<<<<<
  *             )
  *             self.shards.append(shard)
  */
-    if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_session, __pyx_cur_scope->__pyx_v_self->_session) < 0) __PYX_ERR(0, 29, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_4, __pyx_n_s_session, __pyx_cur_scope->__pyx_v_self->_session) < 0) __PYX_ERR(0, 31, __pyx_L1_error)
 
-    /* "sharding.pyx":28
+    /* "sharding.pyx":30
  *             self._session = ClientSession(raise_for_status=True)
  *         for shard_id in range(self.shard_count):
  *             shard = WebSocket_Handler(             # <<<<<<<<<<<<<<
  *                 token=self.token,
  *                 intents=self.intents,
  */
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_empty_tuple, __pyx_t_4); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 28, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_empty_tuple, __pyx_t_4); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 30, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
@@ -2262,18 +2304,18 @@ static PyObject *__pyx_gb_8sharding_12ShardManager_4generator(__pyx_CoroutineObj
     __Pyx_GIVEREF(__pyx_t_3);
     __pyx_t_3 = 0;
 
-    /* "sharding.pyx":37
+    /* "sharding.pyx":40
  *                 _session=self._session
  *             )
  *             self.shards.append(shard)             # <<<<<<<<<<<<<<
  * 
  *     async def connect(self, grace_period: int = 3):
  */
-    __pyx_t_9 = __Pyx_PyObject_Append(__pyx_cur_scope->__pyx_v_self->shards, __pyx_cur_scope->__pyx_v_shard); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 37, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_PyObject_Append(__pyx_cur_scope->__pyx_v_self->shards, __pyx_cur_scope->__pyx_v_shard); if (unlikely(__pyx_t_9 == ((int)-1))) __PYX_ERR(0, 40, __pyx_L1_error)
   }
   CYTHON_MAYBE_UNUSED_VAR(__pyx_cur_scope);
 
-  /* "sharding.pyx":24
+  /* "sharding.pyx":26
  *         self._session = None
  * 
  *     async def register(self):             # <<<<<<<<<<<<<<
@@ -2301,7 +2343,7 @@ static PyObject *__pyx_gb_8sharding_12ShardManager_4generator(__pyx_CoroutineObj
 }
 static PyObject *__pyx_gb_8sharding_12ShardManager_7generator1(__pyx_CoroutineObject *__pyx_generator, CYTHON_UNUSED PyThreadState *__pyx_tstate, PyObject *__pyx_sent_value); /* proto */
 
-/* "sharding.pyx":39
+/* "sharding.pyx":42
  *             self.shards.append(shard)
  * 
  *     async def connect(self, grace_period: int = 3):             # <<<<<<<<<<<<<<
@@ -2341,7 +2383,7 @@ static PyObject *__pyx_pw_8sharding_12ShardManager_6connect(PyObject *__pyx_v_se
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "connect") < 0)) __PYX_ERR(0, 39, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "connect") < 0)) __PYX_ERR(0, 42, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -2355,7 +2397,7 @@ static PyObject *__pyx_pw_8sharding_12ShardManager_6connect(PyObject *__pyx_v_se
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("connect", 0, 0, 1, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 39, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("connect", 0, 0, 1, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 42, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("sharding.ShardManager.connect", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -2380,7 +2422,7 @@ static PyObject *__pyx_pf_8sharding_12ShardManager_5connect(struct __pyx_obj_8sh
   if (unlikely(!__pyx_cur_scope)) {
     __pyx_cur_scope = ((struct __pyx_obj_8sharding___pyx_scope_struct_1_connect *)Py_None);
     __Pyx_INCREF(Py_None);
-    __PYX_ERR(0, 39, __pyx_L1_error)
+    __PYX_ERR(0, 42, __pyx_L1_error)
   } else {
     __Pyx_GOTREF(__pyx_cur_scope);
   }
@@ -2391,7 +2433,7 @@ static PyObject *__pyx_pf_8sharding_12ShardManager_5connect(struct __pyx_obj_8sh
   __Pyx_INCREF(__pyx_cur_scope->__pyx_v_grace_period);
   __Pyx_GIVEREF(__pyx_cur_scope->__pyx_v_grace_period);
   {
-    __pyx_CoroutineObject *gen = __Pyx_Coroutine_New((__pyx_coroutine_body_t) __pyx_gb_8sharding_12ShardManager_7generator1, NULL, (PyObject *) __pyx_cur_scope, __pyx_n_s_connect, __pyx_n_s_ShardManager_connect, __pyx_n_s_sharding); if (unlikely(!gen)) __PYX_ERR(0, 39, __pyx_L1_error)
+    __pyx_CoroutineObject *gen = __Pyx_Coroutine_New((__pyx_coroutine_body_t) __pyx_gb_8sharding_12ShardManager_7generator1, NULL, (PyObject *) __pyx_cur_scope, __pyx_n_s_connect, __pyx_n_s_ShardManager_connect, __pyx_n_s_sharding); if (unlikely(!gen)) __PYX_ERR(0, 42, __pyx_L1_error)
     __Pyx_DECREF(__pyx_cur_scope);
     __Pyx_RefNannyFinishContext();
     return (PyObject *) gen;
@@ -2432,9 +2474,9 @@ static PyObject *__pyx_gb_8sharding_12ShardManager_7generator1(__pyx_CoroutineOb
     return NULL;
   }
   __pyx_L3_first_run:;
-  if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 39, __pyx_L1_error)
+  if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 42, __pyx_L1_error)
 
-  /* "sharding.pyx":40
+  /* "sharding.pyx":43
  * 
  *     async def connect(self, grace_period: int = 3):
  *         for shard in self.shards:             # <<<<<<<<<<<<<<
@@ -2445,26 +2487,26 @@ static PyObject *__pyx_gb_8sharding_12ShardManager_7generator1(__pyx_CoroutineOb
     __pyx_t_1 = __pyx_cur_scope->__pyx_v_self->shards; __Pyx_INCREF(__pyx_t_1); __pyx_t_2 = 0;
     __pyx_t_3 = NULL;
   } else {
-    __pyx_t_2 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_cur_scope->__pyx_v_self->shards); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 40, __pyx_L1_error)
+    __pyx_t_2 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_cur_scope->__pyx_v_self->shards); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 43, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_3 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 40, __pyx_L1_error)
+    __pyx_t_3 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 43, __pyx_L1_error)
   }
   for (;;) {
     if (likely(!__pyx_t_3)) {
       if (likely(PyList_CheckExact(__pyx_t_1))) {
         if (__pyx_t_2 >= PyList_GET_SIZE(__pyx_t_1)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_4 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_4); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 40, __pyx_L1_error)
+        __pyx_t_4 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_4); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 43, __pyx_L1_error)
         #else
-        __pyx_t_4 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 40, __pyx_L1_error)
+        __pyx_t_4 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 43, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         #endif
       } else {
         if (__pyx_t_2 >= PyTuple_GET_SIZE(__pyx_t_1)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_4 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_4); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 40, __pyx_L1_error)
+        __pyx_t_4 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_4); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 43, __pyx_L1_error)
         #else
-        __pyx_t_4 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 40, __pyx_L1_error)
+        __pyx_t_4 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 43, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         #endif
       }
@@ -2474,7 +2516,7 @@ static PyObject *__pyx_gb_8sharding_12ShardManager_7generator1(__pyx_CoroutineOb
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
           if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(0, 40, __pyx_L1_error)
+          else __PYX_ERR(0, 43, __pyx_L1_error)
         }
         break;
       }
@@ -2485,19 +2527,19 @@ static PyObject *__pyx_gb_8sharding_12ShardManager_7generator1(__pyx_CoroutineOb
     __Pyx_GIVEREF(__pyx_t_4);
     __pyx_t_4 = 0;
 
-    /* "sharding.pyx":41
+    /* "sharding.pyx":44
  *     async def connect(self, grace_period: int = 3):
  *         for shard in self.shards:
  *             asyncio.create_task(shard.connect())             # <<<<<<<<<<<<<<
  *             await asyncio.sleep(grace_period)
  *     async def stop(self):
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_asyncio); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 41, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_asyncio); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 44, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_create_task); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 41, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_create_task); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 44, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_cur_scope->__pyx_v_shard, __pyx_n_s_connect); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 41, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_cur_scope->__pyx_v_shard, __pyx_n_s_connect); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 44, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __pyx_t_8 = NULL;
     if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_7))) {
@@ -2511,7 +2553,7 @@ static PyObject *__pyx_gb_8sharding_12ShardManager_7generator1(__pyx_CoroutineOb
     }
     __pyx_t_5 = (__pyx_t_8) ? __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_8) : __Pyx_PyObject_CallNoArg(__pyx_t_7);
     __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-    if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 41, __pyx_L1_error)
+    if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 44, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __pyx_t_7 = NULL;
@@ -2527,21 +2569,21 @@ static PyObject *__pyx_gb_8sharding_12ShardManager_7generator1(__pyx_CoroutineOb
     __pyx_t_4 = (__pyx_t_7) ? __Pyx_PyObject_Call2Args(__pyx_t_6, __pyx_t_7, __pyx_t_5) : __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_5);
     __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 41, __pyx_L1_error)
+    if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 44, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-    /* "sharding.pyx":42
+    /* "sharding.pyx":45
  *         for shard in self.shards:
  *             asyncio.create_task(shard.connect())
  *             await asyncio.sleep(grace_period)             # <<<<<<<<<<<<<<
  *     async def stop(self):
  *         for shard in self.shards:
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_asyncio); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 42, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_n_s_asyncio); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 45, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_sleep); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 42, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_sleep); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 45, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __pyx_t_6 = NULL;
@@ -2556,7 +2598,7 @@ static PyObject *__pyx_gb_8sharding_12ShardManager_7generator1(__pyx_CoroutineOb
     }
     __pyx_t_4 = (__pyx_t_6) ? __Pyx_PyObject_Call2Args(__pyx_t_5, __pyx_t_6, __pyx_cur_scope->__pyx_v_grace_period) : __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_cur_scope->__pyx_v_grace_period);
     __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-    if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 42, __pyx_L1_error)
+    if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 45, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __pyx_r = __Pyx_Coroutine_Yield_From(__pyx_generator, __pyx_t_4);
@@ -2579,16 +2621,16 @@ static PyObject *__pyx_gb_8sharding_12ShardManager_7generator1(__pyx_CoroutineOb
       __Pyx_XGOTREF(__pyx_t_1);
       __pyx_t_2 = __pyx_cur_scope->__pyx_t_1;
       __pyx_t_3 = __pyx_cur_scope->__pyx_t_2;
-      if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 42, __pyx_L1_error)
+      if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 45, __pyx_L1_error)
     } else {
       PyObject* exc_type = __Pyx_PyErr_Occurred();
       if (exc_type) {
         if (likely(exc_type == PyExc_StopIteration || (exc_type != PyExc_GeneratorExit && __Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration)))) PyErr_Clear();
-        else __PYX_ERR(0, 42, __pyx_L1_error)
+        else __PYX_ERR(0, 45, __pyx_L1_error)
       }
     }
 
-    /* "sharding.pyx":40
+    /* "sharding.pyx":43
  * 
  *     async def connect(self, grace_period: int = 3):
  *         for shard in self.shards:             # <<<<<<<<<<<<<<
@@ -2599,7 +2641,7 @@ static PyObject *__pyx_gb_8sharding_12ShardManager_7generator1(__pyx_CoroutineOb
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   CYTHON_MAYBE_UNUSED_VAR(__pyx_cur_scope);
 
-  /* "sharding.pyx":39
+  /* "sharding.pyx":42
  *             self.shards.append(shard)
  * 
  *     async def connect(self, grace_period: int = 3):             # <<<<<<<<<<<<<<
@@ -2630,7 +2672,7 @@ static PyObject *__pyx_gb_8sharding_12ShardManager_7generator1(__pyx_CoroutineOb
 }
 static PyObject *__pyx_gb_8sharding_12ShardManager_10generator2(__pyx_CoroutineObject *__pyx_generator, CYTHON_UNUSED PyThreadState *__pyx_tstate, PyObject *__pyx_sent_value); /* proto */
 
-/* "sharding.pyx":43
+/* "sharding.pyx":46
  *             asyncio.create_task(shard.connect())
  *             await asyncio.sleep(grace_period)
  *     async def stop(self):             # <<<<<<<<<<<<<<
@@ -2663,7 +2705,7 @@ static PyObject *__pyx_pf_8sharding_12ShardManager_8stop(struct __pyx_obj_8shard
   if (unlikely(!__pyx_cur_scope)) {
     __pyx_cur_scope = ((struct __pyx_obj_8sharding___pyx_scope_struct_2_stop *)Py_None);
     __Pyx_INCREF(Py_None);
-    __PYX_ERR(0, 43, __pyx_L1_error)
+    __PYX_ERR(0, 46, __pyx_L1_error)
   } else {
     __Pyx_GOTREF(__pyx_cur_scope);
   }
@@ -2671,7 +2713,7 @@ static PyObject *__pyx_pf_8sharding_12ShardManager_8stop(struct __pyx_obj_8shard
   __Pyx_INCREF((PyObject *)__pyx_cur_scope->__pyx_v_self);
   __Pyx_GIVEREF((PyObject *)__pyx_cur_scope->__pyx_v_self);
   {
-    __pyx_CoroutineObject *gen = __Pyx_Coroutine_New((__pyx_coroutine_body_t) __pyx_gb_8sharding_12ShardManager_10generator2, NULL, (PyObject *) __pyx_cur_scope, __pyx_n_s_stop, __pyx_n_s_ShardManager_stop, __pyx_n_s_sharding); if (unlikely(!gen)) __PYX_ERR(0, 43, __pyx_L1_error)
+    __pyx_CoroutineObject *gen = __Pyx_Coroutine_New((__pyx_coroutine_body_t) __pyx_gb_8sharding_12ShardManager_10generator2, NULL, (PyObject *) __pyx_cur_scope, __pyx_n_s_stop, __pyx_n_s_ShardManager_stop, __pyx_n_s_sharding); if (unlikely(!gen)) __PYX_ERR(0, 46, __pyx_L1_error)
     __Pyx_DECREF(__pyx_cur_scope);
     __Pyx_RefNannyFinishContext();
     return (PyObject *) gen;
@@ -2714,9 +2756,9 @@ static PyObject *__pyx_gb_8sharding_12ShardManager_10generator2(__pyx_CoroutineO
     return NULL;
   }
   __pyx_L3_first_run:;
-  if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 43, __pyx_L1_error)
+  if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 46, __pyx_L1_error)
 
-  /* "sharding.pyx":44
+  /* "sharding.pyx":47
  *             await asyncio.sleep(grace_period)
  *     async def stop(self):
  *         for shard in self.shards:             # <<<<<<<<<<<<<<
@@ -2727,26 +2769,26 @@ static PyObject *__pyx_gb_8sharding_12ShardManager_10generator2(__pyx_CoroutineO
     __pyx_t_1 = __pyx_cur_scope->__pyx_v_self->shards; __Pyx_INCREF(__pyx_t_1); __pyx_t_2 = 0;
     __pyx_t_3 = NULL;
   } else {
-    __pyx_t_2 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_cur_scope->__pyx_v_self->shards); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 44, __pyx_L1_error)
+    __pyx_t_2 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_cur_scope->__pyx_v_self->shards); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 47, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_3 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 44, __pyx_L1_error)
+    __pyx_t_3 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 47, __pyx_L1_error)
   }
   for (;;) {
     if (likely(!__pyx_t_3)) {
       if (likely(PyList_CheckExact(__pyx_t_1))) {
         if (__pyx_t_2 >= PyList_GET_SIZE(__pyx_t_1)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_4 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_4); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 44, __pyx_L1_error)
+        __pyx_t_4 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_4); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 47, __pyx_L1_error)
         #else
-        __pyx_t_4 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 44, __pyx_L1_error)
+        __pyx_t_4 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 47, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         #endif
       } else {
         if (__pyx_t_2 >= PyTuple_GET_SIZE(__pyx_t_1)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_4 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_4); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 44, __pyx_L1_error)
+        __pyx_t_4 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_4); __pyx_t_2++; if (unlikely(0 < 0)) __PYX_ERR(0, 47, __pyx_L1_error)
         #else
-        __pyx_t_4 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 44, __pyx_L1_error)
+        __pyx_t_4 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 47, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         #endif
       }
@@ -2756,7 +2798,7 @@ static PyObject *__pyx_gb_8sharding_12ShardManager_10generator2(__pyx_CoroutineO
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
           if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(0, 44, __pyx_L1_error)
+          else __PYX_ERR(0, 47, __pyx_L1_error)
         }
         break;
       }
@@ -2767,30 +2809,30 @@ static PyObject *__pyx_gb_8sharding_12ShardManager_10generator2(__pyx_CoroutineO
     __Pyx_GIVEREF(__pyx_t_4);
     __pyx_t_4 = 0;
 
-    /* "sharding.pyx":45
+    /* "sharding.pyx":48
  *     async def stop(self):
  *         for shard in self.shards:
  *             if shard.ws is not None:             # <<<<<<<<<<<<<<
  *                 await shard.ws.close()
  *         if self._session is not None:
  */
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_cur_scope->__pyx_v_shard, __pyx_n_s_ws); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 45, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_cur_scope->__pyx_v_shard, __pyx_n_s_ws); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 48, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_5 = (__pyx_t_4 != Py_None);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __pyx_t_6 = (__pyx_t_5 != 0);
     if (__pyx_t_6) {
 
-      /* "sharding.pyx":46
+      /* "sharding.pyx":49
  *         for shard in self.shards:
  *             if shard.ws is not None:
  *                 await shard.ws.close()             # <<<<<<<<<<<<<<
  *         if self._session is not None:
  *             await self._session.close()
  */
-      __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_cur_scope->__pyx_v_shard, __pyx_n_s_ws); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 46, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_cur_scope->__pyx_v_shard, __pyx_n_s_ws); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 49, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
-      __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_close); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 46, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_close); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 49, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
       __pyx_t_7 = NULL;
@@ -2805,7 +2847,7 @@ static PyObject *__pyx_gb_8sharding_12ShardManager_10generator2(__pyx_CoroutineO
       }
       __pyx_t_4 = (__pyx_t_7) ? __Pyx_PyObject_CallOneArg(__pyx_t_8, __pyx_t_7) : __Pyx_PyObject_CallNoArg(__pyx_t_8);
       __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-      if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 46, __pyx_L1_error)
+      if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 49, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       __pyx_r = __Pyx_Coroutine_Yield_From(__pyx_generator, __pyx_t_4);
@@ -2828,16 +2870,16 @@ static PyObject *__pyx_gb_8sharding_12ShardManager_10generator2(__pyx_CoroutineO
         __Pyx_XGOTREF(__pyx_t_1);
         __pyx_t_2 = __pyx_cur_scope->__pyx_t_1;
         __pyx_t_3 = __pyx_cur_scope->__pyx_t_2;
-        if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 46, __pyx_L1_error)
+        if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 49, __pyx_L1_error)
       } else {
         PyObject* exc_type = __Pyx_PyErr_Occurred();
         if (exc_type) {
           if (likely(exc_type == PyExc_StopIteration || (exc_type != PyExc_GeneratorExit && __Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration)))) PyErr_Clear();
-          else __PYX_ERR(0, 46, __pyx_L1_error)
+          else __PYX_ERR(0, 49, __pyx_L1_error)
         }
       }
 
-      /* "sharding.pyx":45
+      /* "sharding.pyx":48
  *     async def stop(self):
  *         for shard in self.shards:
  *             if shard.ws is not None:             # <<<<<<<<<<<<<<
@@ -2846,7 +2888,7 @@ static PyObject *__pyx_gb_8sharding_12ShardManager_10generator2(__pyx_CoroutineO
  */
     }
 
-    /* "sharding.pyx":44
+    /* "sharding.pyx":47
  *             await asyncio.sleep(grace_period)
  *     async def stop(self):
  *         for shard in self.shards:             # <<<<<<<<<<<<<<
@@ -2856,7 +2898,7 @@ static PyObject *__pyx_gb_8sharding_12ShardManager_10generator2(__pyx_CoroutineO
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "sharding.pyx":47
+  /* "sharding.pyx":50
  *             if shard.ws is not None:
  *                 await shard.ws.close()
  *         if self._session is not None:             # <<<<<<<<<<<<<<
@@ -2867,13 +2909,13 @@ static PyObject *__pyx_gb_8sharding_12ShardManager_10generator2(__pyx_CoroutineO
   __pyx_t_5 = (__pyx_t_6 != 0);
   if (__pyx_t_5) {
 
-    /* "sharding.pyx":48
+    /* "sharding.pyx":51
  *                 await shard.ws.close()
  *         if self._session is not None:
  *             await self._session.close()             # <<<<<<<<<<<<<<
  *         print(f"coda: {Fore.RED}All shards stopped.{Fore.RESET}")
  */
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_cur_scope->__pyx_v_self->_session, __pyx_n_s_close); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 48, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_cur_scope->__pyx_v_self->_session, __pyx_n_s_close); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 51, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_8 = NULL;
     if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_4))) {
@@ -2887,7 +2929,7 @@ static PyObject *__pyx_gb_8sharding_12ShardManager_10generator2(__pyx_CoroutineO
     }
     __pyx_t_1 = (__pyx_t_8) ? __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_8) : __Pyx_PyObject_CallNoArg(__pyx_t_4);
     __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 48, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 51, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __pyx_r = __Pyx_Coroutine_Yield_From(__pyx_generator, __pyx_t_1);
@@ -2901,16 +2943,16 @@ static PyObject *__pyx_gb_8sharding_12ShardManager_10generator2(__pyx_CoroutineO
       __pyx_generator->resume_label = 2;
       return __pyx_r;
       __pyx_L9_resume_from_await:;
-      if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 48, __pyx_L1_error)
+      if (unlikely(!__pyx_sent_value)) __PYX_ERR(0, 51, __pyx_L1_error)
     } else {
       PyObject* exc_type = __Pyx_PyErr_Occurred();
       if (exc_type) {
         if (likely(exc_type == PyExc_StopIteration || (exc_type != PyExc_GeneratorExit && __Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration)))) PyErr_Clear();
-        else __PYX_ERR(0, 48, __pyx_L1_error)
+        else __PYX_ERR(0, 51, __pyx_L1_error)
       }
     }
 
-    /* "sharding.pyx":47
+    /* "sharding.pyx":50
  *             if shard.ws is not None:
  *                 await shard.ws.close()
  *         if self._session is not None:             # <<<<<<<<<<<<<<
@@ -2919,12 +2961,12 @@ static PyObject *__pyx_gb_8sharding_12ShardManager_10generator2(__pyx_CoroutineO
  */
   }
 
-  /* "sharding.pyx":49
+  /* "sharding.pyx":52
  *         if self._session is not None:
  *             await self._session.close()
  *         print(f"coda: {Fore.RED}All shards stopped.{Fore.RESET}")             # <<<<<<<<<<<<<<
  */
-  __pyx_t_1 = PyTuple_New(4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 49, __pyx_L1_error)
+  __pyx_t_1 = PyTuple_New(4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 52, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_2 = 0;
   __pyx_t_9 = 127;
@@ -2932,12 +2974,12 @@ static PyObject *__pyx_gb_8sharding_12ShardManager_10generator2(__pyx_CoroutineO
   __pyx_t_2 += 6;
   __Pyx_GIVEREF(__pyx_kp_u_coda);
   PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_kp_u_coda);
-  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_Fore); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 49, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_Fore); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 52, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_RED); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 49, __pyx_L1_error)
+  __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_RED); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 52, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = __Pyx_PyObject_FormatSimple(__pyx_t_8, __pyx_empty_unicode); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 49, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_FormatSimple(__pyx_t_8, __pyx_empty_unicode); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 52, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
   __pyx_t_9 = (__Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_4) > __pyx_t_9) ? __Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_4) : __pyx_t_9;
@@ -2949,12 +2991,12 @@ static PyObject *__pyx_gb_8sharding_12ShardManager_10generator2(__pyx_CoroutineO
   __pyx_t_2 += 19;
   __Pyx_GIVEREF(__pyx_kp_u_All_shards_stopped);
   PyTuple_SET_ITEM(__pyx_t_1, 2, __pyx_kp_u_All_shards_stopped);
-  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_Fore); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 49, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_Fore); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 52, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_RESET); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 49, __pyx_L1_error)
+  __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_RESET); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 52, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = __Pyx_PyObject_FormatSimple(__pyx_t_8, __pyx_empty_unicode); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 49, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_FormatSimple(__pyx_t_8, __pyx_empty_unicode); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 52, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
   __pyx_t_9 = (__Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_4) > __pyx_t_9) ? __Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_4) : __pyx_t_9;
@@ -2962,16 +3004,16 @@ static PyObject *__pyx_gb_8sharding_12ShardManager_10generator2(__pyx_CoroutineO
   __Pyx_GIVEREF(__pyx_t_4);
   PyTuple_SET_ITEM(__pyx_t_1, 3, __pyx_t_4);
   __pyx_t_4 = 0;
-  __pyx_t_4 = __Pyx_PyUnicode_Join(__pyx_t_1, 4, __pyx_t_2, __pyx_t_9); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 49, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyUnicode_Join(__pyx_t_1, 4, __pyx_t_2, __pyx_t_9); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 52, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_builtin_print, __pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 49, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_builtin_print, __pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 52, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   CYTHON_MAYBE_UNUSED_VAR(__pyx_cur_scope);
 
-  /* "sharding.pyx":43
+  /* "sharding.pyx":46
  *             asyncio.create_task(shard.connect())
  *             await asyncio.sleep(grace_period)
  *     async def stop(self):             # <<<<<<<<<<<<<<
@@ -3212,7 +3254,7 @@ static int __pyx_pf_8sharding_12ShardManager_6prefix_4__del__(struct __pyx_obj_8
  *     cdef public str token, prefix
  *     cdef public object intents, shards, _session             # <<<<<<<<<<<<<<
  *     cdef public int shard_count
- *     cdef public bint debug
+ *     cdef public bint _debug
  */
 
 /* Python wrapper */
@@ -3480,8 +3522,8 @@ static int __pyx_pf_8sharding_12ShardManager_8_session_4__del__(struct __pyx_obj
  *     cdef public str token, prefix
  *     cdef public object intents, shards, _session
  *     cdef public int shard_count             # <<<<<<<<<<<<<<
- *     cdef public bint debug
- * 
+ *     cdef public bint _debug
+ *     cdef public bint _compress
  */
 
 /* Python wrapper */
@@ -3561,25 +3603,25 @@ static int __pyx_pf_8sharding_12ShardManager_11shard_count_2__set__(struct __pyx
 /* "sharding.pyx":13
  *     cdef public object intents, shards, _session
  *     cdef public int shard_count
- *     cdef public bint debug             # <<<<<<<<<<<<<<
+ *     cdef public bint _debug             # <<<<<<<<<<<<<<
+ *     cdef public bint _compress
  * 
- *     def __init__(self, token: str, intents: Union[Iterable, int], prefix: str, shard_count: int, debug: bool = False):
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8sharding_12ShardManager_5debug_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_8sharding_12ShardManager_5debug_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_8sharding_12ShardManager_6_debug_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_8sharding_12ShardManager_6_debug_1__get__(PyObject *__pyx_v_self) {
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_8sharding_12ShardManager_5debug___get__(((struct __pyx_obj_8sharding_ShardManager *)__pyx_v_self));
+  __pyx_r = __pyx_pf_8sharding_12ShardManager_6_debug___get__(((struct __pyx_obj_8sharding_ShardManager *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8sharding_12ShardManager_5debug___get__(struct __pyx_obj_8sharding_ShardManager *__pyx_v_self) {
+static PyObject *__pyx_pf_8sharding_12ShardManager_6_debug___get__(struct __pyx_obj_8sharding_ShardManager *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -3588,7 +3630,7 @@ static PyObject *__pyx_pf_8sharding_12ShardManager_5debug___get__(struct __pyx_o
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_v_self->debug); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 13, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_v_self->_debug); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 13, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3597,7 +3639,7 @@ static PyObject *__pyx_pf_8sharding_12ShardManager_5debug___get__(struct __pyx_o
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("sharding.ShardManager.debug.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("sharding.ShardManager._debug.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -3606,19 +3648,19 @@ static PyObject *__pyx_pf_8sharding_12ShardManager_5debug___get__(struct __pyx_o
 }
 
 /* Python wrapper */
-static int __pyx_pw_8sharding_12ShardManager_5debug_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value); /*proto*/
-static int __pyx_pw_8sharding_12ShardManager_5debug_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value) {
+static int __pyx_pw_8sharding_12ShardManager_6_debug_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value); /*proto*/
+static int __pyx_pw_8sharding_12ShardManager_6_debug_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_8sharding_12ShardManager_5debug_2__set__(((struct __pyx_obj_8sharding_ShardManager *)__pyx_v_self), ((PyObject *)__pyx_v_value));
+  __pyx_r = __pyx_pf_8sharding_12ShardManager_6_debug_2__set__(((struct __pyx_obj_8sharding_ShardManager *)__pyx_v_self), ((PyObject *)__pyx_v_value));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static int __pyx_pf_8sharding_12ShardManager_5debug_2__set__(struct __pyx_obj_8sharding_ShardManager *__pyx_v_self, PyObject *__pyx_v_value) {
+static int __pyx_pf_8sharding_12ShardManager_6_debug_2__set__(struct __pyx_obj_8sharding_ShardManager *__pyx_v_self, PyObject *__pyx_v_value) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
@@ -3627,13 +3669,95 @@ static int __pyx_pf_8sharding_12ShardManager_5debug_2__set__(struct __pyx_obj_8s
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
   __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_v_value); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 13, __pyx_L1_error)
-  __pyx_v_self->debug = __pyx_t_1;
+  __pyx_v_self->_debug = __pyx_t_1;
 
   /* function exit code */
   __pyx_r = 0;
   goto __pyx_L0;
   __pyx_L1_error:;
-  __Pyx_AddTraceback("sharding.ShardManager.debug.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("sharding.ShardManager._debug.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = -1;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "sharding.pyx":14
+ *     cdef public int shard_count
+ *     cdef public bint _debug
+ *     cdef public bint _compress             # <<<<<<<<<<<<<<
+ * 
+ *     def __init__(self, token: str, intents: Union[Iterable, int], prefix: str, shard_count: int, debug: bool = False, compress: bool = True):
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_8sharding_12ShardManager_9_compress_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_8sharding_12ShardManager_9_compress_1__get__(PyObject *__pyx_v_self) {
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_8sharding_12ShardManager_9_compress___get__(((struct __pyx_obj_8sharding_ShardManager *)__pyx_v_self));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_8sharding_12ShardManager_9_compress___get__(struct __pyx_obj_8sharding_ShardManager *__pyx_v_self) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__get__", 0);
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_v_self->_compress); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 14, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("sharding.ShardManager._compress.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* Python wrapper */
+static int __pyx_pw_8sharding_12ShardManager_9_compress_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value); /*proto*/
+static int __pyx_pw_8sharding_12ShardManager_9_compress_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
+  __pyx_r = __pyx_pf_8sharding_12ShardManager_9_compress_2__set__(((struct __pyx_obj_8sharding_ShardManager *)__pyx_v_self), ((PyObject *)__pyx_v_value));
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static int __pyx_pf_8sharding_12ShardManager_9_compress_2__set__(struct __pyx_obj_8sharding_ShardManager *__pyx_v_self, PyObject *__pyx_v_value) {
+  int __pyx_r;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__set__", 0);
+  __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_v_value); if (unlikely((__pyx_t_1 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 14, __pyx_L1_error)
+  __pyx_v_self->_compress = __pyx_t_1;
+
+  /* function exit code */
+  __pyx_r = 0;
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __Pyx_AddTraceback("sharding.ShardManager._compress.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
@@ -3668,9 +3792,10 @@ static PyObject *__pyx_pf_8sharding_12ShardManager_11__reduce_cython__(struct __
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
   PyObject *__pyx_t_3 = NULL;
-  int __pyx_t_4;
+  PyObject *__pyx_t_4 = NULL;
   int __pyx_t_5;
   int __pyx_t_6;
+  int __pyx_t_7;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -3679,62 +3804,67 @@ static PyObject *__pyx_pf_8sharding_12ShardManager_11__reduce_cython__(struct __
   /* "(tree fragment)":5
  *     cdef object _dict
  *     cdef bint use_setstate
- *     state = (self._session, self.debug, self.intents, self.prefix, self.shard_count, self.shards, self.token)             # <<<<<<<<<<<<<<
+ *     state = (self._compress, self._debug, self._session, self.intents, self.prefix, self.shard_count, self.shards, self.token)             # <<<<<<<<<<<<<<
  *     _dict = getattr(self, '__dict__', None)
  *     if _dict is not None:
  */
-  __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_v_self->debug); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 5, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_v_self->_compress); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 5, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_self->shard_count); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 5, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyBool_FromLong(__pyx_v_self->_debug); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 5, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = PyTuple_New(7); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 5, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_self->shard_count); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 5, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_4 = PyTuple_New(8); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 5, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __Pyx_GIVEREF(__pyx_t_1);
+  PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_1);
+  __Pyx_GIVEREF(__pyx_t_2);
+  PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_t_2);
   __Pyx_INCREF(__pyx_v_self->_session);
   __Pyx_GIVEREF(__pyx_v_self->_session);
-  PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_v_self->_session);
-  __Pyx_GIVEREF(__pyx_t_1);
-  PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_t_1);
+  PyTuple_SET_ITEM(__pyx_t_4, 2, __pyx_v_self->_session);
   __Pyx_INCREF(__pyx_v_self->intents);
   __Pyx_GIVEREF(__pyx_v_self->intents);
-  PyTuple_SET_ITEM(__pyx_t_3, 2, __pyx_v_self->intents);
+  PyTuple_SET_ITEM(__pyx_t_4, 3, __pyx_v_self->intents);
   __Pyx_INCREF(__pyx_v_self->prefix);
   __Pyx_GIVEREF(__pyx_v_self->prefix);
-  PyTuple_SET_ITEM(__pyx_t_3, 3, __pyx_v_self->prefix);
-  __Pyx_GIVEREF(__pyx_t_2);
-  PyTuple_SET_ITEM(__pyx_t_3, 4, __pyx_t_2);
+  PyTuple_SET_ITEM(__pyx_t_4, 4, __pyx_v_self->prefix);
+  __Pyx_GIVEREF(__pyx_t_3);
+  PyTuple_SET_ITEM(__pyx_t_4, 5, __pyx_t_3);
   __Pyx_INCREF(__pyx_v_self->shards);
   __Pyx_GIVEREF(__pyx_v_self->shards);
-  PyTuple_SET_ITEM(__pyx_t_3, 5, __pyx_v_self->shards);
+  PyTuple_SET_ITEM(__pyx_t_4, 6, __pyx_v_self->shards);
   __Pyx_INCREF(__pyx_v_self->token);
   __Pyx_GIVEREF(__pyx_v_self->token);
-  PyTuple_SET_ITEM(__pyx_t_3, 6, __pyx_v_self->token);
+  PyTuple_SET_ITEM(__pyx_t_4, 7, __pyx_v_self->token);
   __pyx_t_1 = 0;
   __pyx_t_2 = 0;
-  __pyx_v_state = ((PyObject*)__pyx_t_3);
   __pyx_t_3 = 0;
+  __pyx_v_state = ((PyObject*)__pyx_t_4);
+  __pyx_t_4 = 0;
 
   /* "(tree fragment)":6
  *     cdef bint use_setstate
- *     state = (self._session, self.debug, self.intents, self.prefix, self.shard_count, self.shards, self.token)
+ *     state = (self._compress, self._debug, self._session, self.intents, self.prefix, self.shard_count, self.shards, self.token)
  *     _dict = getattr(self, '__dict__', None)             # <<<<<<<<<<<<<<
  *     if _dict is not None:
  *         state += (_dict,)
  */
-  __pyx_t_3 = __Pyx_GetAttr3(((PyObject *)__pyx_v_self), __pyx_n_s_dict, Py_None); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 6, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  __pyx_v__dict = __pyx_t_3;
-  __pyx_t_3 = 0;
+  __pyx_t_4 = __Pyx_GetAttr3(((PyObject *)__pyx_v_self), __pyx_n_s_dict, Py_None); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 6, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __pyx_v__dict = __pyx_t_4;
+  __pyx_t_4 = 0;
 
   /* "(tree fragment)":7
- *     state = (self._session, self.debug, self.intents, self.prefix, self.shard_count, self.shards, self.token)
+ *     state = (self._compress, self._debug, self._session, self.intents, self.prefix, self.shard_count, self.shards, self.token)
  *     _dict = getattr(self, '__dict__', None)
  *     if _dict is not None:             # <<<<<<<<<<<<<<
  *         state += (_dict,)
  *         use_setstate = True
  */
-  __pyx_t_4 = (__pyx_v__dict != Py_None);
-  __pyx_t_5 = (__pyx_t_4 != 0);
-  if (__pyx_t_5) {
+  __pyx_t_5 = (__pyx_v__dict != Py_None);
+  __pyx_t_6 = (__pyx_t_5 != 0);
+  if (__pyx_t_6) {
 
     /* "(tree fragment)":8
  *     _dict = getattr(self, '__dict__', None)
@@ -3743,16 +3873,16 @@ static PyObject *__pyx_pf_8sharding_12ShardManager_11__reduce_cython__(struct __
  *         use_setstate = True
  *     else:
  */
-    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 8, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_4 = PyTuple_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 8, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_4);
     __Pyx_INCREF(__pyx_v__dict);
     __Pyx_GIVEREF(__pyx_v__dict);
-    PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_v__dict);
-    __pyx_t_2 = PyNumber_InPlaceAdd(__pyx_v_state, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 8, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __Pyx_DECREF_SET(__pyx_v_state, ((PyObject*)__pyx_t_2));
-    __pyx_t_2 = 0;
+    PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_v__dict);
+    __pyx_t_3 = PyNumber_InPlaceAdd(__pyx_v_state, __pyx_t_4); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 8, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __Pyx_DECREF_SET(__pyx_v_state, ((PyObject*)__pyx_t_3));
+    __pyx_t_3 = 0;
 
     /* "(tree fragment)":9
  *     if _dict is not None:
@@ -3764,7 +3894,7 @@ static PyObject *__pyx_pf_8sharding_12ShardManager_11__reduce_cython__(struct __
     __pyx_v_use_setstate = 1;
 
     /* "(tree fragment)":7
- *     state = (self._session, self.debug, self.intents, self.prefix, self.shard_count, self.shards, self.token)
+ *     state = (self._compress, self._debug, self._session, self.intents, self.prefix, self.shard_count, self.shards, self.token)
  *     _dict = getattr(self, '__dict__', None)
  *     if _dict is not None:             # <<<<<<<<<<<<<<
  *         state += (_dict,)
@@ -3778,42 +3908,42 @@ static PyObject *__pyx_pf_8sharding_12ShardManager_11__reduce_cython__(struct __
  *     else:
  *         use_setstate = self._session is not None or self.intents is not None or self.prefix is not None or self.shards is not None or self.token is not None             # <<<<<<<<<<<<<<
  *     if use_setstate:
- *         return __pyx_unpickle_ShardManager, (type(self), 0x72c75ad, None), state
+ *         return __pyx_unpickle_ShardManager, (type(self), 0x25bb36c, None), state
  */
   /*else*/ {
-    __pyx_t_4 = (__pyx_v_self->_session != Py_None);
-    __pyx_t_6 = (__pyx_t_4 != 0);
-    if (!__pyx_t_6) {
+    __pyx_t_5 = (__pyx_v_self->_session != Py_None);
+    __pyx_t_7 = (__pyx_t_5 != 0);
+    if (!__pyx_t_7) {
     } else {
-      __pyx_t_5 = __pyx_t_6;
+      __pyx_t_6 = __pyx_t_7;
       goto __pyx_L4_bool_binop_done;
     }
-    __pyx_t_6 = (__pyx_v_self->intents != Py_None);
-    __pyx_t_4 = (__pyx_t_6 != 0);
-    if (!__pyx_t_4) {
+    __pyx_t_7 = (__pyx_v_self->intents != Py_None);
+    __pyx_t_5 = (__pyx_t_7 != 0);
+    if (!__pyx_t_5) {
     } else {
-      __pyx_t_5 = __pyx_t_4;
+      __pyx_t_6 = __pyx_t_5;
       goto __pyx_L4_bool_binop_done;
     }
-    __pyx_t_4 = (__pyx_v_self->prefix != ((PyObject*)Py_None));
-    __pyx_t_6 = (__pyx_t_4 != 0);
-    if (!__pyx_t_6) {
+    __pyx_t_5 = (__pyx_v_self->prefix != ((PyObject*)Py_None));
+    __pyx_t_7 = (__pyx_t_5 != 0);
+    if (!__pyx_t_7) {
     } else {
-      __pyx_t_5 = __pyx_t_6;
+      __pyx_t_6 = __pyx_t_7;
       goto __pyx_L4_bool_binop_done;
     }
-    __pyx_t_6 = (__pyx_v_self->shards != Py_None);
-    __pyx_t_4 = (__pyx_t_6 != 0);
-    if (!__pyx_t_4) {
+    __pyx_t_7 = (__pyx_v_self->shards != Py_None);
+    __pyx_t_5 = (__pyx_t_7 != 0);
+    if (!__pyx_t_5) {
     } else {
-      __pyx_t_5 = __pyx_t_4;
+      __pyx_t_6 = __pyx_t_5;
       goto __pyx_L4_bool_binop_done;
     }
-    __pyx_t_4 = (__pyx_v_self->token != ((PyObject*)Py_None));
-    __pyx_t_6 = (__pyx_t_4 != 0);
-    __pyx_t_5 = __pyx_t_6;
+    __pyx_t_5 = (__pyx_v_self->token != ((PyObject*)Py_None));
+    __pyx_t_7 = (__pyx_t_5 != 0);
+    __pyx_t_6 = __pyx_t_7;
     __pyx_L4_bool_binop_done:;
-    __pyx_v_use_setstate = __pyx_t_5;
+    __pyx_v_use_setstate = __pyx_t_6;
   }
   __pyx_L3:;
 
@@ -3821,89 +3951,89 @@ static PyObject *__pyx_pf_8sharding_12ShardManager_11__reduce_cython__(struct __
  *     else:
  *         use_setstate = self._session is not None or self.intents is not None or self.prefix is not None or self.shards is not None or self.token is not None
  *     if use_setstate:             # <<<<<<<<<<<<<<
- *         return __pyx_unpickle_ShardManager, (type(self), 0x72c75ad, None), state
+ *         return __pyx_unpickle_ShardManager, (type(self), 0x25bb36c, None), state
  *     else:
  */
-  __pyx_t_5 = (__pyx_v_use_setstate != 0);
-  if (__pyx_t_5) {
+  __pyx_t_6 = (__pyx_v_use_setstate != 0);
+  if (__pyx_t_6) {
 
     /* "(tree fragment)":13
  *         use_setstate = self._session is not None or self.intents is not None or self.prefix is not None or self.shards is not None or self.token is not None
  *     if use_setstate:
- *         return __pyx_unpickle_ShardManager, (type(self), 0x72c75ad, None), state             # <<<<<<<<<<<<<<
+ *         return __pyx_unpickle_ShardManager, (type(self), 0x25bb36c, None), state             # <<<<<<<<<<<<<<
  *     else:
- *         return __pyx_unpickle_ShardManager, (type(self), 0x72c75ad, state)
+ *         return __pyx_unpickle_ShardManager, (type(self), 0x25bb36c, state)
  */
     __Pyx_XDECREF(__pyx_r);
-    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_pyx_unpickle_ShardManager); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 13, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = PyTuple_New(3); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 13, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_pyx_unpickle_ShardManager); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 13, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_4 = PyTuple_New(3); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 13, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_4);
     __Pyx_INCREF(((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
     __Pyx_GIVEREF(((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
-    PyTuple_SET_ITEM(__pyx_t_3, 0, ((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
-    __Pyx_INCREF(__pyx_int_120354221);
-    __Pyx_GIVEREF(__pyx_int_120354221);
-    PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_int_120354221);
+    PyTuple_SET_ITEM(__pyx_t_4, 0, ((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
+    __Pyx_INCREF(__pyx_int_39564140);
+    __Pyx_GIVEREF(__pyx_int_39564140);
+    PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_int_39564140);
     __Pyx_INCREF(Py_None);
     __Pyx_GIVEREF(Py_None);
-    PyTuple_SET_ITEM(__pyx_t_3, 2, Py_None);
-    __pyx_t_1 = PyTuple_New(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 13, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_GIVEREF(__pyx_t_2);
-    PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_2);
+    PyTuple_SET_ITEM(__pyx_t_4, 2, Py_None);
+    __pyx_t_2 = PyTuple_New(3); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 13, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
     __Pyx_GIVEREF(__pyx_t_3);
-    PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_3);
+    PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_3);
+    __Pyx_GIVEREF(__pyx_t_4);
+    PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_t_4);
     __Pyx_INCREF(__pyx_v_state);
     __Pyx_GIVEREF(__pyx_v_state);
-    PyTuple_SET_ITEM(__pyx_t_1, 2, __pyx_v_state);
-    __pyx_t_2 = 0;
+    PyTuple_SET_ITEM(__pyx_t_2, 2, __pyx_v_state);
     __pyx_t_3 = 0;
-    __pyx_r = __pyx_t_1;
-    __pyx_t_1 = 0;
+    __pyx_t_4 = 0;
+    __pyx_r = __pyx_t_2;
+    __pyx_t_2 = 0;
     goto __pyx_L0;
 
     /* "(tree fragment)":12
  *     else:
  *         use_setstate = self._session is not None or self.intents is not None or self.prefix is not None or self.shards is not None or self.token is not None
  *     if use_setstate:             # <<<<<<<<<<<<<<
- *         return __pyx_unpickle_ShardManager, (type(self), 0x72c75ad, None), state
+ *         return __pyx_unpickle_ShardManager, (type(self), 0x25bb36c, None), state
  *     else:
  */
   }
 
   /* "(tree fragment)":15
- *         return __pyx_unpickle_ShardManager, (type(self), 0x72c75ad, None), state
+ *         return __pyx_unpickle_ShardManager, (type(self), 0x25bb36c, None), state
  *     else:
- *         return __pyx_unpickle_ShardManager, (type(self), 0x72c75ad, state)             # <<<<<<<<<<<<<<
+ *         return __pyx_unpickle_ShardManager, (type(self), 0x25bb36c, state)             # <<<<<<<<<<<<<<
  * def __setstate_cython__(self, __pyx_state):
  *     __pyx_unpickle_ShardManager__set_state(self, __pyx_state)
  */
   /*else*/ {
     __Pyx_XDECREF(__pyx_r);
-    __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_pyx_unpickle_ShardManager); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 15, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_3 = PyTuple_New(3); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 15, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_pyx_unpickle_ShardManager); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 15, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __pyx_t_4 = PyTuple_New(3); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 15, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_4);
     __Pyx_INCREF(((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
     __Pyx_GIVEREF(((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
-    PyTuple_SET_ITEM(__pyx_t_3, 0, ((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
-    __Pyx_INCREF(__pyx_int_120354221);
-    __Pyx_GIVEREF(__pyx_int_120354221);
-    PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_int_120354221);
+    PyTuple_SET_ITEM(__pyx_t_4, 0, ((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
+    __Pyx_INCREF(__pyx_int_39564140);
+    __Pyx_GIVEREF(__pyx_int_39564140);
+    PyTuple_SET_ITEM(__pyx_t_4, 1, __pyx_int_39564140);
     __Pyx_INCREF(__pyx_v_state);
     __Pyx_GIVEREF(__pyx_v_state);
-    PyTuple_SET_ITEM(__pyx_t_3, 2, __pyx_v_state);
-    __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 15, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_GIVEREF(__pyx_t_1);
-    PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_1);
-    __Pyx_GIVEREF(__pyx_t_3);
-    PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_t_3);
-    __pyx_t_1 = 0;
-    __pyx_t_3 = 0;
-    __pyx_r = __pyx_t_2;
+    PyTuple_SET_ITEM(__pyx_t_4, 2, __pyx_v_state);
+    __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 15, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_GIVEREF(__pyx_t_2);
+    PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_2);
+    __Pyx_GIVEREF(__pyx_t_4);
+    PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_t_4);
     __pyx_t_2 = 0;
+    __pyx_t_4 = 0;
+    __pyx_r = __pyx_t_3;
+    __pyx_t_3 = 0;
     goto __pyx_L0;
   }
 
@@ -3918,6 +4048,7 @@ static PyObject *__pyx_pf_8sharding_12ShardManager_11__reduce_cython__(struct __
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
   __Pyx_AddTraceback("sharding.ShardManager.__reduce_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
@@ -3930,7 +4061,7 @@ static PyObject *__pyx_pf_8sharding_12ShardManager_11__reduce_cython__(struct __
 
 /* "(tree fragment)":16
  *     else:
- *         return __pyx_unpickle_ShardManager, (type(self), 0x72c75ad, state)
+ *         return __pyx_unpickle_ShardManager, (type(self), 0x25bb36c, state)
  * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
  *     __pyx_unpickle_ShardManager__set_state(self, __pyx_state)
  */
@@ -3958,7 +4089,7 @@ static PyObject *__pyx_pf_8sharding_12ShardManager_13__setstate_cython__(struct 
   __Pyx_RefNannySetupContext("__setstate_cython__", 0);
 
   /* "(tree fragment)":17
- *         return __pyx_unpickle_ShardManager, (type(self), 0x72c75ad, state)
+ *         return __pyx_unpickle_ShardManager, (type(self), 0x25bb36c, state)
  * def __setstate_cython__(self, __pyx_state):
  *     __pyx_unpickle_ShardManager__set_state(self, __pyx_state)             # <<<<<<<<<<<<<<
  */
@@ -3969,7 +4100,7 @@ static PyObject *__pyx_pf_8sharding_12ShardManager_13__setstate_cython__(struct 
 
   /* "(tree fragment)":16
  *     else:
- *         return __pyx_unpickle_ShardManager, (type(self), 0x72c75ad, state)
+ *         return __pyx_unpickle_ShardManager, (type(self), 0x25bb36c, state)
  * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
  *     __pyx_unpickle_ShardManager__set_state(self, __pyx_state)
  */
@@ -4088,9 +4219,9 @@ static PyObject *__pyx_pf_8sharding___pyx_unpickle_ShardManager(CYTHON_UNUSED Py
   /* "(tree fragment)":4
  *     cdef object __pyx_PickleError
  *     cdef object __pyx_result
- *     if __pyx_checksum not in (0x72c75ad, 0x703eccc, 0x37673e1):             # <<<<<<<<<<<<<<
+ *     if __pyx_checksum not in (0x25bb36c, 0x633096e, 0xfcafcec):             # <<<<<<<<<<<<<<
  *         from pickle import PickleError as __pyx_PickleError
- *         raise __pyx_PickleError("Incompatible checksums (0x%x vs (0x72c75ad, 0x703eccc, 0x37673e1) = (_session, debug, intents, prefix, shard_count, shards, token))" % __pyx_checksum)
+ *         raise __pyx_PickleError("Incompatible checksums (0x%x vs (0x25bb36c, 0x633096e, 0xfcafcec) = (_compress, _debug, _session, intents, prefix, shard_count, shards, token))" % __pyx_checksum)
  */
   __pyx_t_1 = __Pyx_PyInt_From_long(__pyx_v___pyx_checksum); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -4101,9 +4232,9 @@ static PyObject *__pyx_pf_8sharding___pyx_unpickle_ShardManager(CYTHON_UNUSED Py
 
     /* "(tree fragment)":5
  *     cdef object __pyx_result
- *     if __pyx_checksum not in (0x72c75ad, 0x703eccc, 0x37673e1):
+ *     if __pyx_checksum not in (0x25bb36c, 0x633096e, 0xfcafcec):
  *         from pickle import PickleError as __pyx_PickleError             # <<<<<<<<<<<<<<
- *         raise __pyx_PickleError("Incompatible checksums (0x%x vs (0x72c75ad, 0x703eccc, 0x37673e1) = (_session, debug, intents, prefix, shard_count, shards, token))" % __pyx_checksum)
+ *         raise __pyx_PickleError("Incompatible checksums (0x%x vs (0x25bb36c, 0x633096e, 0xfcafcec) = (_compress, _debug, _session, intents, prefix, shard_count, shards, token))" % __pyx_checksum)
  *     __pyx_result = ShardManager.__new__(__pyx_type)
  */
     __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 5, __pyx_L1_error)
@@ -4122,9 +4253,9 @@ static PyObject *__pyx_pf_8sharding___pyx_unpickle_ShardManager(CYTHON_UNUSED Py
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
     /* "(tree fragment)":6
- *     if __pyx_checksum not in (0x72c75ad, 0x703eccc, 0x37673e1):
+ *     if __pyx_checksum not in (0x25bb36c, 0x633096e, 0xfcafcec):
  *         from pickle import PickleError as __pyx_PickleError
- *         raise __pyx_PickleError("Incompatible checksums (0x%x vs (0x72c75ad, 0x703eccc, 0x37673e1) = (_session, debug, intents, prefix, shard_count, shards, token))" % __pyx_checksum)             # <<<<<<<<<<<<<<
+ *         raise __pyx_PickleError("Incompatible checksums (0x%x vs (0x25bb36c, 0x633096e, 0xfcafcec) = (_compress, _debug, _session, intents, prefix, shard_count, shards, token))" % __pyx_checksum)             # <<<<<<<<<<<<<<
  *     __pyx_result = ShardManager.__new__(__pyx_type)
  *     if __pyx_state is not None:
  */
@@ -4157,15 +4288,15 @@ static PyObject *__pyx_pf_8sharding___pyx_unpickle_ShardManager(CYTHON_UNUSED Py
     /* "(tree fragment)":4
  *     cdef object __pyx_PickleError
  *     cdef object __pyx_result
- *     if __pyx_checksum not in (0x72c75ad, 0x703eccc, 0x37673e1):             # <<<<<<<<<<<<<<
+ *     if __pyx_checksum not in (0x25bb36c, 0x633096e, 0xfcafcec):             # <<<<<<<<<<<<<<
  *         from pickle import PickleError as __pyx_PickleError
- *         raise __pyx_PickleError("Incompatible checksums (0x%x vs (0x72c75ad, 0x703eccc, 0x37673e1) = (_session, debug, intents, prefix, shard_count, shards, token))" % __pyx_checksum)
+ *         raise __pyx_PickleError("Incompatible checksums (0x%x vs (0x25bb36c, 0x633096e, 0xfcafcec) = (_compress, _debug, _session, intents, prefix, shard_count, shards, token))" % __pyx_checksum)
  */
   }
 
   /* "(tree fragment)":7
  *         from pickle import PickleError as __pyx_PickleError
- *         raise __pyx_PickleError("Incompatible checksums (0x%x vs (0x72c75ad, 0x703eccc, 0x37673e1) = (_session, debug, intents, prefix, shard_count, shards, token))" % __pyx_checksum)
+ *         raise __pyx_PickleError("Incompatible checksums (0x%x vs (0x25bb36c, 0x633096e, 0xfcafcec) = (_compress, _debug, _session, intents, prefix, shard_count, shards, token))" % __pyx_checksum)
  *     __pyx_result = ShardManager.__new__(__pyx_type)             # <<<<<<<<<<<<<<
  *     if __pyx_state is not None:
  *         __pyx_unpickle_ShardManager__set_state(<ShardManager> __pyx_result, __pyx_state)
@@ -4191,7 +4322,7 @@ static PyObject *__pyx_pf_8sharding___pyx_unpickle_ShardManager(CYTHON_UNUSED Py
   __pyx_t_4 = 0;
 
   /* "(tree fragment)":8
- *         raise __pyx_PickleError("Incompatible checksums (0x%x vs (0x72c75ad, 0x703eccc, 0x37673e1) = (_session, debug, intents, prefix, shard_count, shards, token))" % __pyx_checksum)
+ *         raise __pyx_PickleError("Incompatible checksums (0x%x vs (0x25bb36c, 0x633096e, 0xfcafcec) = (_compress, _debug, _session, intents, prefix, shard_count, shards, token))" % __pyx_checksum)
  *     __pyx_result = ShardManager.__new__(__pyx_type)
  *     if __pyx_state is not None:             # <<<<<<<<<<<<<<
  *         __pyx_unpickle_ShardManager__set_state(<ShardManager> __pyx_result, __pyx_state)
@@ -4214,7 +4345,7 @@ static PyObject *__pyx_pf_8sharding___pyx_unpickle_ShardManager(CYTHON_UNUSED Py
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
     /* "(tree fragment)":8
- *         raise __pyx_PickleError("Incompatible checksums (0x%x vs (0x72c75ad, 0x703eccc, 0x37673e1) = (_session, debug, intents, prefix, shard_count, shards, token))" % __pyx_checksum)
+ *         raise __pyx_PickleError("Incompatible checksums (0x%x vs (0x25bb36c, 0x633096e, 0xfcafcec) = (_compress, _debug, _session, intents, prefix, shard_count, shards, token))" % __pyx_checksum)
  *     __pyx_result = ShardManager.__new__(__pyx_type)
  *     if __pyx_state is not None:             # <<<<<<<<<<<<<<
  *         __pyx_unpickle_ShardManager__set_state(<ShardManager> __pyx_result, __pyx_state)
@@ -4227,7 +4358,7 @@ static PyObject *__pyx_pf_8sharding___pyx_unpickle_ShardManager(CYTHON_UNUSED Py
  *         __pyx_unpickle_ShardManager__set_state(<ShardManager> __pyx_result, __pyx_state)
  *     return __pyx_result             # <<<<<<<<<<<<<<
  * cdef __pyx_unpickle_ShardManager__set_state(ShardManager __pyx_result, tuple __pyx_state):
- *     __pyx_result._session = __pyx_state[0]; __pyx_result.debug = __pyx_state[1]; __pyx_result.intents = __pyx_state[2]; __pyx_result.prefix = __pyx_state[3]; __pyx_result.shard_count = __pyx_state[4]; __pyx_result.shards = __pyx_state[5]; __pyx_result.token = __pyx_state[6]
+ *     __pyx_result._compress = __pyx_state[0]; __pyx_result._debug = __pyx_state[1]; __pyx_result._session = __pyx_state[2]; __pyx_result.intents = __pyx_state[3]; __pyx_result.prefix = __pyx_state[4]; __pyx_result.shard_count = __pyx_state[5]; __pyx_result.shards = __pyx_state[6]; __pyx_result.token = __pyx_state[7]
  */
   __Pyx_XDECREF(__pyx_r);
   __Pyx_INCREF(__pyx_v___pyx_result);
@@ -4260,8 +4391,8 @@ static PyObject *__pyx_pf_8sharding___pyx_unpickle_ShardManager(CYTHON_UNUSED Py
  *         __pyx_unpickle_ShardManager__set_state(<ShardManager> __pyx_result, __pyx_state)
  *     return __pyx_result
  * cdef __pyx_unpickle_ShardManager__set_state(ShardManager __pyx_result, tuple __pyx_state):             # <<<<<<<<<<<<<<
- *     __pyx_result._session = __pyx_state[0]; __pyx_result.debug = __pyx_state[1]; __pyx_result.intents = __pyx_state[2]; __pyx_result.prefix = __pyx_state[3]; __pyx_result.shard_count = __pyx_state[4]; __pyx_result.shards = __pyx_state[5]; __pyx_result.token = __pyx_state[6]
- *     if len(__pyx_state) > 7 and hasattr(__pyx_result, '__dict__'):
+ *     __pyx_result._compress = __pyx_state[0]; __pyx_result._debug = __pyx_state[1]; __pyx_result._session = __pyx_state[2]; __pyx_result.intents = __pyx_state[3]; __pyx_result.prefix = __pyx_state[4]; __pyx_result.shard_count = __pyx_state[5]; __pyx_result.shards = __pyx_state[6]; __pyx_result.token = __pyx_state[7]
+ *     if len(__pyx_state) > 8 and hasattr(__pyx_result, '__dict__'):
  */
 
 static PyObject *__pyx_f_8sharding___pyx_unpickle_ShardManager__set_state(struct __pyx_obj_8sharding_ShardManager *__pyx_v___pyx_result, PyObject *__pyx_v___pyx_state) {
@@ -4284,15 +4415,33 @@ static PyObject *__pyx_f_8sharding___pyx_unpickle_ShardManager__set_state(struct
   /* "(tree fragment)":12
  *     return __pyx_result
  * cdef __pyx_unpickle_ShardManager__set_state(ShardManager __pyx_result, tuple __pyx_state):
- *     __pyx_result._session = __pyx_state[0]; __pyx_result.debug = __pyx_state[1]; __pyx_result.intents = __pyx_state[2]; __pyx_result.prefix = __pyx_state[3]; __pyx_result.shard_count = __pyx_state[4]; __pyx_result.shards = __pyx_state[5]; __pyx_result.token = __pyx_state[6]             # <<<<<<<<<<<<<<
- *     if len(__pyx_state) > 7 and hasattr(__pyx_result, '__dict__'):
- *         __pyx_result.__dict__.update(__pyx_state[7])
+ *     __pyx_result._compress = __pyx_state[0]; __pyx_result._debug = __pyx_state[1]; __pyx_result._session = __pyx_state[2]; __pyx_result.intents = __pyx_state[3]; __pyx_result.prefix = __pyx_state[4]; __pyx_result.shard_count = __pyx_state[5]; __pyx_result.shards = __pyx_state[6]; __pyx_result.token = __pyx_state[7]             # <<<<<<<<<<<<<<
+ *     if len(__pyx_state) > 8 and hasattr(__pyx_result, '__dict__'):
+ *         __pyx_result.__dict__.update(__pyx_state[8])
  */
   if (unlikely(__pyx_v___pyx_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
     __PYX_ERR(1, 12, __pyx_L1_error)
   }
   __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 12, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) __PYX_ERR(1, 12, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_v___pyx_result->_compress = __pyx_t_2;
+  if (unlikely(__pyx_v___pyx_state == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+    __PYX_ERR(1, 12, __pyx_L1_error)
+  }
+  __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 12, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) __PYX_ERR(1, 12, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_v___pyx_result->_debug = __pyx_t_2;
+  if (unlikely(__pyx_v___pyx_state == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+    __PYX_ERR(1, 12, __pyx_L1_error)
+  }
+  __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 2, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_GIVEREF(__pyx_t_1);
   __Pyx_GOTREF(__pyx_v___pyx_result->_session);
@@ -4303,16 +4452,7 @@ static PyObject *__pyx_f_8sharding___pyx_unpickle_ShardManager__set_state(struct
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
     __PYX_ERR(1, 12, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 12, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) __PYX_ERR(1, 12, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_v___pyx_result->debug = __pyx_t_2;
-  if (unlikely(__pyx_v___pyx_state == Py_None)) {
-    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(1, 12, __pyx_L1_error)
-  }
-  __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 2, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 12, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 3, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_GIVEREF(__pyx_t_1);
   __Pyx_GOTREF(__pyx_v___pyx_result->intents);
@@ -4323,7 +4463,7 @@ static PyObject *__pyx_f_8sharding___pyx_unpickle_ShardManager__set_state(struct
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
     __PYX_ERR(1, 12, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 3, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 12, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 4, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   if (!(likely(PyUnicode_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||((void)PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "unicode", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_GIVEREF(__pyx_t_1);
@@ -4335,7 +4475,7 @@ static PyObject *__pyx_f_8sharding___pyx_unpickle_ShardManager__set_state(struct
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
     __PYX_ERR(1, 12, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 4, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 12, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 5, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_3 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_3 == (int)-1) && PyErr_Occurred())) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -4344,7 +4484,7 @@ static PyObject *__pyx_f_8sharding___pyx_unpickle_ShardManager__set_state(struct
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
     __PYX_ERR(1, 12, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 5, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 12, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 6, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_GIVEREF(__pyx_t_1);
   __Pyx_GOTREF(__pyx_v___pyx_result->shards);
@@ -4355,7 +4495,7 @@ static PyObject *__pyx_f_8sharding___pyx_unpickle_ShardManager__set_state(struct
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
     __PYX_ERR(1, 12, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 6, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 12, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 7, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   if (!(likely(PyUnicode_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||((void)PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "unicode", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(1, 12, __pyx_L1_error)
   __Pyx_GIVEREF(__pyx_t_1);
@@ -4366,16 +4506,16 @@ static PyObject *__pyx_f_8sharding___pyx_unpickle_ShardManager__set_state(struct
 
   /* "(tree fragment)":13
  * cdef __pyx_unpickle_ShardManager__set_state(ShardManager __pyx_result, tuple __pyx_state):
- *     __pyx_result._session = __pyx_state[0]; __pyx_result.debug = __pyx_state[1]; __pyx_result.intents = __pyx_state[2]; __pyx_result.prefix = __pyx_state[3]; __pyx_result.shard_count = __pyx_state[4]; __pyx_result.shards = __pyx_state[5]; __pyx_result.token = __pyx_state[6]
- *     if len(__pyx_state) > 7 and hasattr(__pyx_result, '__dict__'):             # <<<<<<<<<<<<<<
- *         __pyx_result.__dict__.update(__pyx_state[7])
+ *     __pyx_result._compress = __pyx_state[0]; __pyx_result._debug = __pyx_state[1]; __pyx_result._session = __pyx_state[2]; __pyx_result.intents = __pyx_state[3]; __pyx_result.prefix = __pyx_state[4]; __pyx_result.shard_count = __pyx_state[5]; __pyx_result.shards = __pyx_state[6]; __pyx_result.token = __pyx_state[7]
+ *     if len(__pyx_state) > 8 and hasattr(__pyx_result, '__dict__'):             # <<<<<<<<<<<<<<
+ *         __pyx_result.__dict__.update(__pyx_state[8])
  */
   if (unlikely(__pyx_v___pyx_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
     __PYX_ERR(1, 13, __pyx_L1_error)
   }
   __pyx_t_4 = PyTuple_GET_SIZE(__pyx_v___pyx_state); if (unlikely(__pyx_t_4 == ((Py_ssize_t)-1))) __PYX_ERR(1, 13, __pyx_L1_error)
-  __pyx_t_5 = ((__pyx_t_4 > 7) != 0);
+  __pyx_t_5 = ((__pyx_t_4 > 8) != 0);
   if (__pyx_t_5) {
   } else {
     __pyx_t_2 = __pyx_t_5;
@@ -4388,9 +4528,9 @@ static PyObject *__pyx_f_8sharding___pyx_unpickle_ShardManager__set_state(struct
   if (__pyx_t_2) {
 
     /* "(tree fragment)":14
- *     __pyx_result._session = __pyx_state[0]; __pyx_result.debug = __pyx_state[1]; __pyx_result.intents = __pyx_state[2]; __pyx_result.prefix = __pyx_state[3]; __pyx_result.shard_count = __pyx_state[4]; __pyx_result.shards = __pyx_state[5]; __pyx_result.token = __pyx_state[6]
- *     if len(__pyx_state) > 7 and hasattr(__pyx_result, '__dict__'):
- *         __pyx_result.__dict__.update(__pyx_state[7])             # <<<<<<<<<<<<<<
+ *     __pyx_result._compress = __pyx_state[0]; __pyx_result._debug = __pyx_state[1]; __pyx_result._session = __pyx_state[2]; __pyx_result.intents = __pyx_state[3]; __pyx_result.prefix = __pyx_state[4]; __pyx_result.shard_count = __pyx_state[5]; __pyx_result.shards = __pyx_state[6]; __pyx_result.token = __pyx_state[7]
+ *     if len(__pyx_state) > 8 and hasattr(__pyx_result, '__dict__'):
+ *         __pyx_result.__dict__.update(__pyx_state[8])             # <<<<<<<<<<<<<<
  */
     __pyx_t_7 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v___pyx_result), __pyx_n_s_dict); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 14, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
@@ -4401,7 +4541,7 @@ static PyObject *__pyx_f_8sharding___pyx_unpickle_ShardManager__set_state(struct
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
       __PYX_ERR(1, 14, __pyx_L1_error)
     }
-    __pyx_t_7 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 7, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 14, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 8, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(1, 14, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __pyx_t_9 = NULL;
     if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_8))) {
@@ -4423,9 +4563,9 @@ static PyObject *__pyx_f_8sharding___pyx_unpickle_ShardManager__set_state(struct
 
     /* "(tree fragment)":13
  * cdef __pyx_unpickle_ShardManager__set_state(ShardManager __pyx_result, tuple __pyx_state):
- *     __pyx_result._session = __pyx_state[0]; __pyx_result.debug = __pyx_state[1]; __pyx_result.intents = __pyx_state[2]; __pyx_result.prefix = __pyx_state[3]; __pyx_result.shard_count = __pyx_state[4]; __pyx_result.shards = __pyx_state[5]; __pyx_result.token = __pyx_state[6]
- *     if len(__pyx_state) > 7 and hasattr(__pyx_result, '__dict__'):             # <<<<<<<<<<<<<<
- *         __pyx_result.__dict__.update(__pyx_state[7])
+ *     __pyx_result._compress = __pyx_state[0]; __pyx_result._debug = __pyx_state[1]; __pyx_result._session = __pyx_state[2]; __pyx_result.intents = __pyx_state[3]; __pyx_result.prefix = __pyx_state[4]; __pyx_result.shard_count = __pyx_state[5]; __pyx_result.shards = __pyx_state[6]; __pyx_result.token = __pyx_state[7]
+ *     if len(__pyx_state) > 8 and hasattr(__pyx_result, '__dict__'):             # <<<<<<<<<<<<<<
+ *         __pyx_result.__dict__.update(__pyx_state[8])
  */
   }
 
@@ -4433,8 +4573,8 @@ static PyObject *__pyx_f_8sharding___pyx_unpickle_ShardManager__set_state(struct
  *         __pyx_unpickle_ShardManager__set_state(<ShardManager> __pyx_result, __pyx_state)
  *     return __pyx_result
  * cdef __pyx_unpickle_ShardManager__set_state(ShardManager __pyx_result, tuple __pyx_state):             # <<<<<<<<<<<<<<
- *     __pyx_result._session = __pyx_state[0]; __pyx_result.debug = __pyx_state[1]; __pyx_result.intents = __pyx_state[2]; __pyx_result.prefix = __pyx_state[3]; __pyx_result.shard_count = __pyx_state[4]; __pyx_result.shards = __pyx_state[5]; __pyx_result.token = __pyx_state[6]
- *     if len(__pyx_state) > 7 and hasattr(__pyx_result, '__dict__'):
+ *     __pyx_result._compress = __pyx_state[0]; __pyx_result._debug = __pyx_state[1]; __pyx_result._session = __pyx_state[2]; __pyx_result.intents = __pyx_state[3]; __pyx_result.prefix = __pyx_state[4]; __pyx_result.shard_count = __pyx_state[5]; __pyx_result.shards = __pyx_state[6]; __pyx_result.token = __pyx_state[7]
+ *     if len(__pyx_state) > 8 and hasattr(__pyx_result, '__dict__'):
  */
 
   /* function exit code */
@@ -4596,13 +4736,27 @@ static int __pyx_setprop_8sharding_12ShardManager_shard_count(PyObject *o, PyObj
   }
 }
 
-static PyObject *__pyx_getprop_8sharding_12ShardManager_debug(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_8sharding_12ShardManager_5debug_1__get__(o);
+static PyObject *__pyx_getprop_8sharding_12ShardManager__debug(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_8sharding_12ShardManager_6_debug_1__get__(o);
 }
 
-static int __pyx_setprop_8sharding_12ShardManager_debug(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+static int __pyx_setprop_8sharding_12ShardManager__debug(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
   if (v) {
-    return __pyx_pw_8sharding_12ShardManager_5debug_3__set__(o, v);
+    return __pyx_pw_8sharding_12ShardManager_6_debug_3__set__(o, v);
+  }
+  else {
+    PyErr_SetString(PyExc_NotImplementedError, "__del__");
+    return -1;
+  }
+}
+
+static PyObject *__pyx_getprop_8sharding_12ShardManager__compress(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_8sharding_12ShardManager_9_compress_1__get__(o);
+}
+
+static int __pyx_setprop_8sharding_12ShardManager__compress(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+  if (v) {
+    return __pyx_pw_8sharding_12ShardManager_9_compress_3__set__(o, v);
   }
   else {
     PyErr_SetString(PyExc_NotImplementedError, "__del__");
@@ -4626,7 +4780,8 @@ static struct PyGetSetDef __pyx_getsets_8sharding_ShardManager[] = {
   {(char *)"shards", __pyx_getprop_8sharding_12ShardManager_shards, __pyx_setprop_8sharding_12ShardManager_shards, (char *)0, 0},
   {(char *)"_session", __pyx_getprop_8sharding_12ShardManager__session, __pyx_setprop_8sharding_12ShardManager__session, (char *)0, 0},
   {(char *)"shard_count", __pyx_getprop_8sharding_12ShardManager_shard_count, __pyx_setprop_8sharding_12ShardManager_shard_count, (char *)0, 0},
-  {(char *)"debug", __pyx_getprop_8sharding_12ShardManager_debug, __pyx_setprop_8sharding_12ShardManager_debug, (char *)0, 0},
+  {(char *)"_debug", __pyx_getprop_8sharding_12ShardManager__debug, __pyx_setprop_8sharding_12ShardManager__debug, (char *)0, 0},
+  {(char *)"_compress", __pyx_getprop_8sharding_12ShardManager__compress, __pyx_setprop_8sharding_12ShardManager__compress, (char *)0, 0},
   {0, 0, 0, 0, 0}
 };
 
@@ -5124,6 +5279,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_close, __pyx_k_close, sizeof(__pyx_k_close), 0, 0, 1, 1},
   {&__pyx_kp_u_coda, __pyx_k_coda, sizeof(__pyx_k_coda), 0, 1, 0, 0},
   {&__pyx_n_s_colorama, __pyx_k_colorama, sizeof(__pyx_k_colorama), 0, 0, 1, 1},
+  {&__pyx_n_s_compress, __pyx_k_compress, sizeof(__pyx_k_compress), 0, 0, 1, 1},
   {&__pyx_n_s_connect, __pyx_k_connect, sizeof(__pyx_k_connect), 0, 0, 1, 1},
   {&__pyx_n_s_create_task, __pyx_k_create_task, sizeof(__pyx_k_create_task), 0, 0, 1, 1},
   {&__pyx_n_s_debug, __pyx_k_debug, sizeof(__pyx_k_debug), 0, 0, 1, 1},
@@ -5156,6 +5312,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_setstate, __pyx_k_setstate, sizeof(__pyx_k_setstate), 0, 0, 1, 1},
   {&__pyx_n_s_setstate_cython, __pyx_k_setstate_cython, sizeof(__pyx_k_setstate_cython), 0, 0, 1, 1},
   {&__pyx_n_s_shard_count, __pyx_k_shard_count, sizeof(__pyx_k_shard_count), 0, 0, 1, 1},
+  {&__pyx_n_s_shard_count_2, __pyx_k_shard_count_2, sizeof(__pyx_k_shard_count_2), 0, 0, 1, 1},
   {&__pyx_n_s_shard_id, __pyx_k_shard_id, sizeof(__pyx_k_shard_id), 0, 0, 1, 1},
   {&__pyx_n_s_sharding, __pyx_k_sharding, sizeof(__pyx_k_sharding), 0, 0, 1, 1},
   {&__pyx_n_s_sleep, __pyx_k_sleep, sizeof(__pyx_k_sleep), 0, 0, 1, 1},
@@ -5170,8 +5327,8 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, 0, 0, 0, 0, 0, 0}
 };
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 27, __pyx_L1_error)
-  __pyx_builtin_print = __Pyx_GetBuiltinName(__pyx_n_s_print); if (!__pyx_builtin_print) __PYX_ERR(0, 49, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 29, __pyx_L1_error)
+  __pyx_builtin_print = __Pyx_GetBuiltinName(__pyx_n_s_print); if (!__pyx_builtin_print) __PYX_ERR(0, 52, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -5184,11 +5341,11 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "(tree fragment)":4
  *     cdef object __pyx_PickleError
  *     cdef object __pyx_result
- *     if __pyx_checksum not in (0x72c75ad, 0x703eccc, 0x37673e1):             # <<<<<<<<<<<<<<
+ *     if __pyx_checksum not in (0x25bb36c, 0x633096e, 0xfcafcec):             # <<<<<<<<<<<<<<
  *         from pickle import PickleError as __pyx_PickleError
- *         raise __pyx_PickleError("Incompatible checksums (0x%x vs (0x72c75ad, 0x703eccc, 0x37673e1) = (_session, debug, intents, prefix, shard_count, shards, token))" % __pyx_checksum)
+ *         raise __pyx_PickleError("Incompatible checksums (0x%x vs (0x25bb36c, 0x633096e, 0xfcafcec) = (_compress, _debug, _session, intents, prefix, shard_count, shards, token))" % __pyx_checksum)
  */
-  __pyx_tuple_ = PyTuple_Pack(3, __pyx_int_120354221, __pyx_int_117697740, __pyx_int_58094561); if (unlikely(!__pyx_tuple_)) __PYX_ERR(1, 4, __pyx_L1_error)
+  __pyx_tuple_ = PyTuple_Pack(3, __pyx_int_39564140, __pyx_int_104008046, __pyx_int_264961260); if (unlikely(!__pyx_tuple_)) __PYX_ERR(1, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple_);
   __Pyx_GIVEREF(__pyx_tuple_);
 
@@ -5211,9 +5368,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 static CYTHON_SMALL_CODE int __Pyx_InitGlobals(void) {
   if (__Pyx_InitStrings(__pyx_string_tab) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_3 = PyInt_FromLong(3); if (unlikely(!__pyx_int_3)) __PYX_ERR(0, 1, __pyx_L1_error)
-  __pyx_int_58094561 = PyInt_FromLong(58094561L); if (unlikely(!__pyx_int_58094561)) __PYX_ERR(0, 1, __pyx_L1_error)
-  __pyx_int_117697740 = PyInt_FromLong(117697740L); if (unlikely(!__pyx_int_117697740)) __PYX_ERR(0, 1, __pyx_L1_error)
-  __pyx_int_120354221 = PyInt_FromLong(120354221L); if (unlikely(!__pyx_int_120354221)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __pyx_int_39564140 = PyInt_FromLong(39564140L); if (unlikely(!__pyx_int_39564140)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __pyx_int_104008046 = PyInt_FromLong(104008046L); if (unlikely(!__pyx_int_104008046)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __pyx_int_264961260 = PyInt_FromLong(264961260L); if (unlikely(!__pyx_int_264961260)) __PYX_ERR(0, 1, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -5268,7 +5425,7 @@ static int __Pyx_modinit_type_init_code(void) {
   if (PyObject_SetAttr(__pyx_m, __pyx_n_s_ShardManager, (PyObject *)&__pyx_type_8sharding_ShardManager) < 0) __PYX_ERR(0, 9, __pyx_L1_error)
   if (__Pyx_setup_reduce((PyObject*)&__pyx_type_8sharding_ShardManager) < 0) __PYX_ERR(0, 9, __pyx_L1_error)
   __pyx_ptype_8sharding_ShardManager = &__pyx_type_8sharding_ShardManager;
-  if (PyType_Ready(&__pyx_type_8sharding___pyx_scope_struct__register) < 0) __PYX_ERR(0, 24, __pyx_L1_error)
+  if (PyType_Ready(&__pyx_type_8sharding___pyx_scope_struct__register) < 0) __PYX_ERR(0, 26, __pyx_L1_error)
   #if PY_VERSION_HEX < 0x030800B1
   __pyx_type_8sharding___pyx_scope_struct__register.tp_print = 0;
   #endif
@@ -5276,7 +5433,7 @@ static int __Pyx_modinit_type_init_code(void) {
     __pyx_type_8sharding___pyx_scope_struct__register.tp_getattro = __Pyx_PyObject_GenericGetAttrNoDict;
   }
   __pyx_ptype_8sharding___pyx_scope_struct__register = &__pyx_type_8sharding___pyx_scope_struct__register;
-  if (PyType_Ready(&__pyx_type_8sharding___pyx_scope_struct_1_connect) < 0) __PYX_ERR(0, 39, __pyx_L1_error)
+  if (PyType_Ready(&__pyx_type_8sharding___pyx_scope_struct_1_connect) < 0) __PYX_ERR(0, 42, __pyx_L1_error)
   #if PY_VERSION_HEX < 0x030800B1
   __pyx_type_8sharding___pyx_scope_struct_1_connect.tp_print = 0;
   #endif
@@ -5284,7 +5441,7 @@ static int __Pyx_modinit_type_init_code(void) {
     __pyx_type_8sharding___pyx_scope_struct_1_connect.tp_getattro = __Pyx_PyObject_GenericGetAttrNoDict;
   }
   __pyx_ptype_8sharding___pyx_scope_struct_1_connect = &__pyx_type_8sharding___pyx_scope_struct_1_connect;
-  if (PyType_Ready(&__pyx_type_8sharding___pyx_scope_struct_2_stop) < 0) __PYX_ERR(0, 43, __pyx_L1_error)
+  if (PyType_Ready(&__pyx_type_8sharding___pyx_scope_struct_2_stop) < 0) __PYX_ERR(0, 46, __pyx_L1_error)
   #if PY_VERSION_HEX < 0x030800B1
   __pyx_type_8sharding___pyx_scope_struct_2_stop.tp_print = 0;
   #endif
