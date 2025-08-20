@@ -33,14 +33,15 @@ class ShardManager:
     this is the python fallback for the Cython sharding implementation, it is recommended to only use this when faced with compatibillity issues or if it is
     general preference.
     """
-    def __init__(self, token: str, intents: Union[Iterable[intents_base], int], prefix: str, shard_count: int, debug: bool = False):
+    def __init__(self, token: str, intents: Union[Iterable[intents_base], int], prefix: str, shard_count: int, debug: bool = False, compress: bool = True):
         self.token = token
         self.intents = intents
         self.prefix = prefix
         self.shard_count = shard_count
-        self.debug = debug
-        self.shards = []
+        self._debug = debug
+        self._compress = compress
         self._session = None
+        self.shards = []
 
     async def register(self):
         print(f"{Fore.RED}the python fallback for the Cython sharding implementation is being run.{Fore.RESET}")
@@ -52,8 +53,9 @@ class ShardManager:
                 intents=self.intents,
                 prefix=self.prefix,
                 debug=self.debug,
-                shard_id=shard_id,
-                shard_count=self.shard_count,
+                compress=self._compress,
+                _shard_id=shard_id,
+                _shard_count=self.shard_count,
                 _session=self._session
                 
             )
@@ -72,7 +74,7 @@ class ShardManager:
 
 class WebSocket_Handler:
 
-    def __init__(self, token: str, intents: Union[Iterable[intents_base], int], prefix: str, debug: bool = False, shard_id: int = 0, shard_count: int = 1, compress: bool = True, _session = None, **kwargs) -> None:
+    def __init__(self, token: str, intents: Union[Iterable[intents_base], int], prefix: str, debug: bool = False, compress: bool = True, _shard_id: int = 0, _shard_count: int = 1, _session = None, **kwargs) -> None:
         if isinstance(intents, Iterable):
             self.intents = sum(intent.value for intent in intents)
         else:
@@ -85,8 +87,8 @@ class WebSocket_Handler:
         self.ws = None
         self._events_tree = {}
         self._command_tree = {}
-        self.shard_id = shard_id
-        self.shard_count = shard_count
+        self.shard_id = _shard_id
+        self.shard_count = _shard_count
 
     async def _create_ws_connection(self):
         await self._fetch_gateway_url()
