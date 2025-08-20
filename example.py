@@ -1,5 +1,6 @@
 from Coda.core.sharding import ShardManager
 from Coda.core.handler_base import handler_base
+from Coda.core.ws import ShardManager
 from Coda.core.constants import *
 import asyncio
 shard_manager = ShardManager(
