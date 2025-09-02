@@ -26,7 +26,6 @@ class HeartBeats_Handler:
     def __init__(self) -> None:
         ...
 
-
 class ShardManager:
     """
     WARNING:
@@ -126,7 +125,7 @@ class WebSocket_Handler:
         await self.ws.close()
         await self._create_ws_connection()
         print(f"coda: {Fore.LIGHTGREEN_EX}Shard {self.shard_id}/{self.shard_count} reconnected{Fore.RESET} to the{Fore.GREEN} gateway successfully{Fore.RESET} [{datetime.now(UTC).strftime('%Y-%m-%d %H:%M')}]")
-
+    
     async def _resume(self) -> None:
         await self.ws.send_bytes(orjson.dumps({
             "op": 6,

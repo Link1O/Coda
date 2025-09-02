@@ -4,7 +4,7 @@ import asyncio
 from aiohttp import ClientSession
 from colorama import Fore
 from typing import Union, Iterable
-from .ws import WebSocket_Handler
+from ._core.ws import WebSocket_Handler
 
 cdef class ShardManager:
     cdef public str token, prefix
@@ -43,6 +43,13 @@ cdef class ShardManager:
         for shard in self.shards:
             asyncio.create_task(shard.connect())
             await asyncio.sleep(grace_period)
+    async def stop_shard(self, shard: WebSocket_Handler):
+        shard._keep_alive_task.cancel()
+        await shard.ws.close()
+    async def stop_shards(self, shards: list[WebSocket_Handler]):
+        for shard in shards:
+            shard._keep_alive_task.cancel()
+            await shard.ws.close()
     async def stop(self):
         for shard in self.shards:
             if shard.ws is not None:
