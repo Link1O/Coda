@@ -34,7 +34,7 @@ To get your bot operational quickly:
 1. Create a Python file, for example, `main.py`, and set up your bot: 
 
     ```python
-    from Coda.core.http import WebSocket_Handler
+    from Coda import WebSocket_Handler
 
     bot = WebSocket_Handler(prefix="!", token="your-discord-bot-token")
 
@@ -42,7 +42,9 @@ To get your bot operational quickly:
     async def hello(ctx):
         await ctx.send("Hello, world!")
 
-    bot.run()
+    loop = asyncio.new_event_loop()
+    loop.run_until_complete(WebSocket_Handler.connect())
+    loop.run_forever()
     ``` 
 
 2. Start your bot:
