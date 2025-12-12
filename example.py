@@ -1,4 +1,4 @@
-from Coda import *
+from Coda import ShardedClient, intents_base, presence_status_base, base_handler
 import asyncio
 
 sharded_client = ShardedClient(

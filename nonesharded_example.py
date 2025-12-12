@@ -1,4 +1,4 @@
-from Coda import *
+from Coda import Client, intents_base, presence_status_base, base_handler
 import asyncio
 
 client = Client(
