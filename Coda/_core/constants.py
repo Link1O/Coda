@@ -1,4 +1,9 @@
 from enum import Enum
+
+
+__base_url__ = "https://discord.com/api/v10/"
+
+
 class intents_base(Enum):
     GUILDS = 1 << 0
     GUILD_MEMBERS = 1 << 1
@@ -18,6 +23,7 @@ class intents_base(Enum):
     MESSAGE_CONTENT = 1 << 15
     GUILD_SCHEDULED_EVENTS = 1 << 16
     ALL = sum(1 << i for i in range(17))
+
 
 class colors_base(Enum):
     RED = 0xFF0000
@@ -76,10 +82,12 @@ class colors_base(Enum):
     CHOCOLATE = 0xD2691E
     GOLDENROD = 0xDAA520
 
+
 class presence_type_base(Enum):
     PLAYING = 0
     STREAMING = 1
     LISTENING = 2
+
 
 class presence_status_base(Enum):
     ONLINE = "online"

@@ -4,14 +4,8 @@ from setuptools import setup, Extension
 from Cython.Build import cythonize
 
 extensions = [
-    Extension(
-        "sharding",
-        sources=["_core/sharding.pyx"]
-    ),
-    Extension(
-        "tools", 
-        sources=["utils/tools.pyx"]
-    )
+    Extension("sharding", sources=["_core/sharding.pyx"]),
+    Extension("tools", sources=["utils/tools.pyx"]),
 ]
 
 setup(
