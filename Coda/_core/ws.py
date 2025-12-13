@@ -1,5 +1,4 @@
 import asyncio
-import threading
 from aiohttp import ClientSession, ClientConnectionError, WSMsgType
 import zlib
 import orjson
