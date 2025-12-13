@@ -13,7 +13,7 @@ Coda is a straightforward and efficient framework for creating Discord Clients a
 
 ### Requirements  
 
-- **Python 3.8+**: Ensure you have Python version 3.8 or higher installed.  
+- **Python 3.10+**: Ensure you have Python version 3.8 or higher installed.  
 - **Discord Bot Token**: Obtain your bot’s token from the [Discord Developer Portal](https://discord.com/developers/applications).  
 
 ### Steps 
