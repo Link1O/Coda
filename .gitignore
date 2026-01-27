@@ -1,1 +1,10 @@
+build/
+dist/
+*.egg-info/
+*.so
+*.pyd
+*.dll
+Coda/_core/*.c
+Coda/utils/*.c
 __pycache__/
+*.py[cod]
