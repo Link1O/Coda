@@ -1,25 +1,26 @@
-from Coda import Client, intents_base, presence_status_base, base_handler
+from Coda import Client, Intents, PresenceStatus, Interaction
 import asyncio
 
 client = Client(
     "YOUR_TOKEN",
-    intents=intents_base.ALL,
+    intents=Intents.ALL,
     prefix="!",
     debug=True,
 )
 
 
 async def main():
-    await client.setup()
+    await client.register()
 
     @client.on_ready
     async def on_ready_event():
         await client.change_presence(
-            presence_status_base.DND, f"running an unsharded Client!"
+            status=PresenceStatus.DND,
+            value=f"running an unsharded Client!"
         )
 
-    @client.command()
-    async def hello(ctx: base_handler):
+    @client.slash_command()
+    async def hello(ctx: Interaction):
         await ctx.reply("Hello, world")
 
     await client.connect()

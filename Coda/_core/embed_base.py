@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class embed_base:
+class Embed:
     def __init__(
         self,
         title: str,
