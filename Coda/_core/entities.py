@@ -6,16 +6,18 @@ from .payloads import MessagePayload
 from .components_base import ActionRow
 from .exceptions import *
 from .http import _request
-from .models import ObjectBuilder, Author, Poll # Import from models
+from .models import ObjectBuilder, Author, Poll  # Import from models
+
 
 class Message(ObjectBuilder):
     """
     Represents a Discord Message.
-    
-    This class is 'Interaction-Aware', meaning if it was created as a 
-    response to an interaction, it stores the interaction context to 
+
+    This class is 'Interaction-Aware', meaning if it was created as a
+    response to an interaction, it stores the interaction context to
     allow seamless follow-ups via `.reply()`.
     """
+
     id: str
     channel_id: str
     guild_id: str
@@ -57,33 +59,43 @@ class Message(ObjectBuilder):
     ):
         """
         Reply to this message.
-        
-        If this message is an interaction, it will 
-        automatically be sent as an interaction follow-up. Otherwise, 
+
+        If this message is an interaction, it will
+        automatically be sent as an interaction follow-up. Otherwise,
         it sends a standard message reply.
         """
-        from .payloads import InteractionPayload # Local import to avoid circular dependency
+        from .payloads import (
+            InteractionPayload,
+        )  # Local import to avoid circular dependency
+
         if not any([content, embeds, sticker_ids, poll, components]):
             raise ValueError("No arguments provided")
-            
+
         # If we have an interaction token, we can use it to reply as a follow-up
-        if hasattr(self, "_interaction_token") and self._interaction_token and hasattr(self, "_application_id") and self._application_id:
-             payload = InteractionPayload(
-                content=content,
-                embeds=embeds,
-                poll=poll,
-                components=components
+        if (
+            hasattr(self, "_interaction_token")
+            and self._interaction_token
+            and hasattr(self, "_application_id")
+            and self._application_id
+        ):
+            payload = InteractionPayload(
+                content=content, embeds=embeds, poll=poll, components=components
             ).payload_tree
-            
-             data = await _request(
-                 self._session,
-                 "POST",
-                 f"{__base_url__}webhooks/{self._application_id}/{self._interaction_token}",
-                 json=payload
-             )
-             return Message(data, self._session, self._auth, self.channel, 
-                            interaction_token=self._interaction_token, 
-                            application_id=self._application_id)
+
+            data = await _request(
+                self._session,
+                "POST",
+                f"{__base_url__}webhooks/{self._application_id}/{self._interaction_token}",
+                json=payload,
+            )
+            return Message(
+                data,
+                self._session,
+                self._auth,
+                self.channel,
+                interaction_token=self._interaction_token,
+                application_id=self._application_id,
+            )
 
         # Standard message reply
         payload = MessagePayload(
@@ -93,14 +105,14 @@ class Message(ObjectBuilder):
             poll=poll,
             allowed_mentions=allowed_mentions,
             reference_message_id=self.id,
-            components=components
+            components=components,
         ).payload_tree
-        
+
         data = await _request(
-            self._session, 
-            "POST", 
+            self._session,
+            "POST",
             f"{__base_url__}channels/{self.channel.id}/messages",
-            json=payload
+            json=payload,
         )
         return Message(
             tree=data, session=self._session, auth=self._auth, channel=self.channel
@@ -122,22 +134,27 @@ class Message(ObjectBuilder):
             embeds_payload.extend([embed_item.tree for embed_item in embeds])
 
         payload = {"content": new_content or self.content, "embeds": embeds_payload}
-        
-        if hasattr(self, "_interaction_token") and self._interaction_token and hasattr(self, "_application_id") and self._application_id:
+
+        if (
+            hasattr(self, "_interaction_token")
+            and self._interaction_token
+            and hasattr(self, "_application_id")
+            and self._application_id
+        ):
             data = await _request(
                 self._session,
                 "PATCH",
                 f"{__base_url__}webhooks/{self._application_id}/{self._interaction_token}/messages/{self.id}",
-                json=payload
+                json=payload,
             )
         else:
             data = await _request(
                 self._session,
                 "PATCH",
                 f"{__base_url__}channels/{self.channel.id}/messages/{self.id}",
-                json=payload
+                json=payload,
             )
-        
+
         self.update(data)
         return self
 
@@ -146,17 +163,22 @@ class Message(ObjectBuilder):
         Delete this message.
 
         """
-        if hasattr(self, "_interaction_token") and self._interaction_token and hasattr(self, "_application_id") and self._application_id:
+        if (
+            hasattr(self, "_interaction_token")
+            and self._interaction_token
+            and hasattr(self, "_application_id")
+            and self._application_id
+        ):
             await _request(
                 self._session,
                 "DELETE",
-                f"{__base_url__}webhooks/{self._application_id}/{self._interaction_token}/messages/{self.id}"
+                f"{__base_url__}webhooks/{self._application_id}/{self._interaction_token}/messages/{self.id}",
             )
         else:
             await _request(
-                 self._session,
-                 "DELETE",
-                 f"{__base_url__}channels/{self.channel.id}/messages/{self.id}"
+                self._session,
+                "DELETE",
+                f"{__base_url__}channels/{self.channel.id}/messages/{self.id}",
             )
         return True
 
@@ -167,7 +189,7 @@ class Message(ObjectBuilder):
         await _request(
             self._session,
             "PUT",
-            f"{__base_url__}channels/{self.channel.id}/pins/{self.id}"
+            f"{__base_url__}channels/{self.channel.id}/pins/{self.id}",
         )
         self.pinned = True
         return self
@@ -179,7 +201,7 @@ class Message(ObjectBuilder):
         await _request(
             self._session,
             "DELETE",
-            f"{__base_url__}channels/{self.channel.id}/pins/{self.id}"
+            f"{__base_url__}channels/{self.channel.id}/pins/{self.id}",
         )
         self.pinned = False
         return self
@@ -191,7 +213,7 @@ class Message(ObjectBuilder):
         await _request(
             self._session,
             "PUT",
-            f"{__base_url__}channels/{self.channel.id}/messages/{self.id}/reactions/{emoji}/@me"
+            f"{__base_url__}channels/{self.channel.id}/messages/{self.id}/reactions/{emoji}/@me",
         )
         return self
 
@@ -203,7 +225,7 @@ class Message(ObjectBuilder):
         await _request(
             self._session,
             "DELETE",
-             f"{__base_url__}channels/{self.channel.id}/messages/{self.id}/reactions/{emoji}{user_segment}"
+            f"{__base_url__}channels/{self.channel.id}/messages/{self.id}/reactions/{emoji}{user_segment}",
         )
         return self
 
@@ -214,7 +236,7 @@ class Message(ObjectBuilder):
         await _request(
             self._session,
             "DELETE",
-            f"{__base_url__}channels/{self.channel.id}/messages/{self.id}/reactions"
+            f"{__base_url__}channels/{self.channel.id}/messages/{self.id}/reactions",
         )
         self.reactions = []
         return self
@@ -226,7 +248,7 @@ class Message(ObjectBuilder):
         self.reactions = await _request(
             self._session,
             "GET",
-            f"{__base_url__}channels/{self.channel.id}/messages/{self.id}/reactions/{emoji}"
+            f"{__base_url__}channels/{self.channel.id}/messages/{self.id}/reactions/{emoji}",
         )
         return self.reactions
 
@@ -235,6 +257,7 @@ class Channel(ObjectBuilder):
     """
     Represents a Discord Channel.
     """
+
     id: str
     type: int
     last_message_id: str
@@ -247,6 +270,7 @@ class Channel(ObjectBuilder):
     position: int
     permission_overwrites: List
     nsfw: bool
+
     def __init__(self, tree, **kwargs) -> None:
         super().__init__(tree)
         self.id = kwargs["id"]
@@ -262,7 +286,7 @@ class Channel(ObjectBuilder):
             self._session,
             "GET",
             f"{__base_url__}channels/{self.id}/messages/{message_id}",
-            headers={"Authorization": self.kwargs["auth"]}
+            headers={"Authorization": self.kwargs["auth"]},
         )
         return Message(
             tree=data,
@@ -296,10 +320,10 @@ class Channel(ObjectBuilder):
             components=components,
         ).payload_tree
         data = await _request(
-             self._session,
+            self._session,
             "POST",
             f"{__base_url__}channels/{self.id}/messages",
-            json=payload
+            json=payload,
         )
         return Message(
             tree=data,
@@ -312,13 +336,9 @@ class Channel(ObjectBuilder):
         """
         Delete this channel.
         """
-        await _request(
-            self._session,
-            "DELETE",
-            f"{__base_url__}channels/{self.id}"
-        )
+        await _request(self._session, "DELETE", f"{__base_url__}channels/{self.id}")
         return True
-    
+
     async def get_pins(self, before: str = None, limit: int = None):
         """
         Retrieve all pinned messages in the channel.
@@ -329,7 +349,10 @@ class Channel(ObjectBuilder):
         data = await _request(
             self._session,
             "GET",
-            f"{__base_url__}channels/{self.id}/pins", 
-            json={"before": before, "limit": limit}
+            f"{__base_url__}channels/{self.id}/pins",
+            json={"before": before, "limit": limit},
         )
-        return [Message(tree=pin, session=self._session, auth=self._auth, channel=self) for pin in data]
+        return [
+            Message(tree=pin, session=self._session, auth=self._auth, channel=self)
+            for pin in data
+        ]

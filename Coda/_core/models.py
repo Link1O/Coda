@@ -1,11 +1,13 @@
 from typing import Any, Dict, Optional
 from .constants import PollLayoutStyle
 
+
 class ObjectBuilder:
     """
     A utility class that converts dictionaries into objects with dot-notation access.
     Automatically recurses into nested dictionaries.
     """
+
     def __init__(self, data: Dict[str, Any]):
         self.update(data)
 
@@ -27,6 +29,7 @@ class Author:
     """
     Represents a Discord User/Author object.
     """
+
     id: str
     username: str
     avatar: Optional[str]
@@ -49,6 +52,7 @@ class Guild:
     """
     Represents a shorthand Discord Guild object.
     """
+
     def __init__(self, **kwargs) -> None:
         self.id = kwargs["id"]
 
@@ -78,9 +82,10 @@ class Poll(ObjectBuilder):
     """
     Represents a Discord Poll object
     """
+
     question: str
     answers: PollAnswers
     expiry: str
     allow_multiselect: bool
     layout_type: PollLayoutStyle
-    results:  PollResults
+    results: PollResults

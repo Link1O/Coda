@@ -6,6 +6,7 @@ class Button:
     """
     Represents a Discord Button component.
     """
+
     def __init__(
         self,
         label: Optional[str] = None,
@@ -13,7 +14,7 @@ class Button:
         style: ButtonStyle = ButtonStyle.PRIMARY,
         emoji: Optional[dict] = None,
         url: Optional[str] = None,
-        disabled: bool = False
+        disabled: bool = False,
     ):
         self.label = label
         self.custom_id = custom_id
@@ -27,7 +28,7 @@ class Button:
         payload = {
             "type": ComponentType.BUTTON.value,
             "style": self.style.value,
-            "disabled": self.disabled
+            "disabled": self.disabled,
         }
         if self.label:
             payload["label"] = self.label
@@ -39,17 +40,19 @@ class Button:
             payload["url"] = self.url
         return payload
 
+
 class SelectOption:
     """
     Represents an option in a Select Menu.
     """
+
     def __init__(
         self,
         label: str,
         value: str,
         description: Optional[str] = None,
         emoji: Optional[dict] = None,
-        default: bool = False
+        default: bool = False,
     ):
         self.label = label
         self.value = value
@@ -59,21 +62,19 @@ class SelectOption:
 
     @property
     def tree(self) -> dict:
-        payload = {
-            "label": self.label,
-            "value": self.value,
-            "default": self.default
-        }
+        payload = {"label": self.label, "value": self.value, "default": self.default}
         if self.description:
             payload["description"] = self.description
         if self.emoji:
             payload["emoji"] = self.emoji
         return payload
 
+
 class BaseSelect:
     """
     Base class for all Discord Select Menu types.
     """
+
     def __init__(
         self,
         custom_id: str,
@@ -81,7 +82,7 @@ class BaseSelect:
         min_values: int = 1,
         max_values: int = 1,
         disabled: bool = False,
-        type: ComponentType = ComponentType.STRING_SELECT
+        type: ComponentType = ComponentType.STRING_SELECT,
     ):
         self.custom_id = custom_id
         self.placeholder = placeholder
@@ -97,16 +98,18 @@ class BaseSelect:
             "custom_id": self.custom_id,
             "min_values": self.min_values,
             "max_values": self.max_values,
-            "disabled": self.disabled
+            "disabled": self.disabled,
         }
         if self.placeholder:
             payload["placeholder"] = self.placeholder
         return payload
 
+
 class StringSelect(BaseSelect):
     """
     Represents a Select Menu with a list of custom string options.
     """
+
     def __init__(
         self,
         custom_id: str,
@@ -114,9 +117,16 @@ class StringSelect(BaseSelect):
         placeholder: Optional[str] = None,
         min_values: int = 1,
         max_values: int = 1,
-        disabled: bool = False
+        disabled: bool = False,
     ):
-        super().__init__(custom_id, placeholder, min_values, max_values, disabled, ComponentType.STRING_SELECT)
+        super().__init__(
+            custom_id,
+            placeholder,
+            min_values,
+            max_values,
+            disabled,
+            ComponentType.STRING_SELECT,
+        )
         self.options = options
 
     @property
@@ -125,20 +135,26 @@ class StringSelect(BaseSelect):
         payload["options"] = [o.tree for o in self.options]
         return payload
 
+
 class UserSelect(BaseSelect):
     def __init__(self, custom_id: str, **kwargs):
         super().__init__(custom_id, type=ComponentType.USER_SELECT, **kwargs)
+
 
 class RoleSelect(BaseSelect):
     def __init__(self, custom_id: str, **kwargs):
         super().__init__(custom_id, type=ComponentType.ROLE_SELECT, **kwargs)
 
+
 class MentionableSelect(BaseSelect):
     def __init__(self, custom_id: str, **kwargs):
         super().__init__(custom_id, type=ComponentType.MENTIONABLE_SELECT, **kwargs)
 
+
 class ChannelSelect(BaseSelect):
-    def __init__(self, custom_id: str, channel_types: Optional[List[int]] = None, **kwargs):
+    def __init__(
+        self, custom_id: str, channel_types: Optional[List[int]] = None, **kwargs
+    ):
         super().__init__(custom_id, type=ComponentType.CHANNEL_SELECT, **kwargs)
         self.channel_types = channel_types
 
@@ -154,6 +170,7 @@ class TextInput:
     """
     Represents a Text Input component for use in Modals.
     """
+
     def __init__(
         self,
         custom_id: str,
@@ -163,7 +180,7 @@ class TextInput:
         value: Optional[str] = None,
         min_length: int = 0,
         max_length: int = 4000,
-        required: bool = True
+        required: bool = True,
     ):
         self.custom_id = custom_id
         self.label = label
@@ -183,7 +200,7 @@ class TextInput:
             "style": self.style.value,
             "min_length": self.min_length,
             "max_length": self.max_length,
-            "required": self.required
+            "required": self.required,
         }
         if self.placeholder:
             payload["placeholder"] = self.placeholder
@@ -191,15 +208,43 @@ class TextInput:
             payload["value"] = self.value
         return payload
 
+
 class ActionRow:
     """
     Represents an Action Row component that holds other interactive components.
     Discord allows up to 5 action rows per message.
     """
-    def __init__(self, components: Optional[List[Union[Button, StringSelect, UserSelect, RoleSelect, MentionableSelect, ChannelSelect, TextInput]]] = None):
+
+    def __init__(
+        self,
+        components: Optional[
+            List[
+                Union[
+                    Button,
+                    StringSelect,
+                    UserSelect,
+                    RoleSelect,
+                    MentionableSelect,
+                    ChannelSelect,
+                    TextInput,
+                ]
+            ]
+        ] = None,
+    ):
         self.components = components or []
 
-    def add_component(self, component: Union[Button, StringSelect, UserSelect, RoleSelect, MentionableSelect, ChannelSelect, TextInput]):
+    def add_component(
+        self,
+        component: Union[
+            Button,
+            StringSelect,
+            UserSelect,
+            RoleSelect,
+            MentionableSelect,
+            ChannelSelect,
+            TextInput,
+        ],
+    ):
         self.components.append(component)
         return self
 
@@ -207,6 +252,5 @@ class ActionRow:
     def tree(self) -> dict:
         return {
             "type": ComponentType.ACTION_ROW.value,
-            "components": [c.tree for c in self.components]
+            "components": [c.tree for c in self.components],
         }
-

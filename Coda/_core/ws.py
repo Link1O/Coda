@@ -6,7 +6,13 @@ from os import name as os_name
 from colorama import Fore
 from typing import Union, Iterable, List, NoReturn
 from datetime import datetime, UTC
-from .constants import __base_url__, PresenceStatus, PresenceType, Intents, InteractionType
+from .constants import (
+    __base_url__,
+    PresenceStatus,
+    PresenceType,
+    Intents,
+    InteractionType,
+)
 from .entities import Channel, Message
 from .interactions import Interaction
 from .models import Guild, Option, Poll
@@ -26,7 +32,9 @@ class HeartBeatsHandler:
 async def FetchClientData(session: ClientSession, auth: str):
     data1, data2 = await asyncio.gather(
         _request(session, "GET", f"{__base_url__}gateway"),
-        _request(session, "GET", f"{__base_url__}users/@me", headers={"Authorization": auth})
+        _request(
+            session, "GET", f"{__base_url__}users/@me", headers={"Authorization": auth}
+        ),
     )
     return data1, data2
 
@@ -66,13 +74,13 @@ class ShardedClient:
             f"{Fore.RED}The python fallback for the Cython sharding implementation is being run.{Fore.RESET}"
         )
         if not self.session:
-            self.session = ClientSession(headers={
+            self.session = ClientSession(
+                headers={
                     "authorization": self._auth,
-                    "content-type": "application/json",  
-                })
-        gateway_data, client_info = await FetchClientData(
-            self.session, self._auth
-        )
+                    "content-type": "application/json",
+                }
+            )
+        gateway_data, client_info = await FetchClientData(self.session, self._auth)
         for shard_id in range(self.shard_count):
             shard = WebSocket(
                 intents=self.intents,
@@ -91,7 +99,7 @@ class ShardedClient:
     async def connect(self, grace_period: int = 3):
         """
         Start the connection loop for all registered shards.
-        
+
         Args:
             grace_period (int): Seconds to wait between starting each shard to avoid identify 429s.
         """
@@ -115,6 +123,7 @@ class Webhook:
     Represents a Discord Webhook.
     Provides methods for sending messages, getting info, and deleting messages via a webhook URL.
     """
+
     def __init__(self, session: ClientSession, webhook_url: str):
         self.session = session
         self.webhook_url = webhook_url
@@ -148,7 +157,9 @@ class Webhook:
         return await _request(self.session, "GET", self.webhook_url)
 
     async def delete_message(self, message_id: int):
-        await _request(self.session, "DELETE", f"{self.webhook_url}/messages/{message_id}")
+        await _request(
+            self.session, "DELETE", f"{self.webhook_url}/messages/{message_id}"
+        )
         return True
 
 
@@ -157,6 +168,7 @@ class WebSocket:
     Represents a single shard connection to the Discord Gateway.
     Handles events, heartbeats, and command dispatching.
     """
+
     def __init__(
         self,
         intents: Union[Iterable[Intents], int],
@@ -303,8 +315,8 @@ class WebSocket:
                                         tree={"id": data["d"]["channel_id"]},
                                         session=self.session,
                                         id=data["d"]["channel_id"],
-                                        auth=self._auth
-                                    )
+                                        auth=self._auth,
+                                    ),
                                 ),
                             )
                         if self._command_tree:
@@ -323,14 +335,16 @@ class WebSocket:
                                 if prov_args_count_len in range(
                                     req_arg_count, max_arg_count + 1
                                 ):
-                                    channel = await self.get_channel(data["d"]["channel_id"])
+                                    channel = await self.get_channel(
+                                        data["d"]["channel_id"]
+                                    )
                                     await self._trigger(
                                         command_data["coro"],
                                         Message(
                                             tree=data["d"],
                                             session=self.session,
                                             auth=self._auth,
-                                            channel=channel
+                                            channel=channel,
                                         ),
                                         *args,
                                     )
@@ -341,37 +355,46 @@ class WebSocket:
                                         else f"Coda: Arguments limit exceeded. Max: {max_arg_count}"
                                     )
                     if data["t"] == "INTERACTION_CREATE":
-                        if data["d"]["type"] == InteractionType.APPLICATION_COMMAND.value:
-                            interaction = Interaction(self.session, data["d"], self._auth)
+                        if (
+                            data["d"]["type"]
+                            == InteractionType.APPLICATION_COMMAND.value
+                        ):
+                            interaction = Interaction(
+                                self.session, data["d"], self._auth
+                            )
                             cmd_name = interaction.data.get("name")
                             if cmd_name in self._slash_commands_tree:
                                 kwargs = {}
                                 if "options" in interaction.data:
                                     for option in interaction.data["options"]:
                                         kwargs[option["name"]] = option["value"]
-                                        
+
                                 await self._trigger(
                                     self._slash_commands_tree[cmd_name]["coro"],
                                     interaction,
-                                    **kwargs
+                                    **kwargs,
                                 )
-                        elif data["d"]["type"] == InteractionType.MESSAGE_COMPONENT.value:
-                            interaction = Interaction(self.session, data["d"], self._auth)
+                        elif (
+                            data["d"]["type"] == InteractionType.MESSAGE_COMPONENT.value
+                        ):
+                            interaction = Interaction(
+                                self.session, data["d"], self._auth
+                            )
                             custom_id = interaction.data.get("custom_id")
                             if custom_id in self._component_handlers:
                                 await self._trigger(
-                                    self._component_handlers[custom_id],
-                                    interaction
+                                    self._component_handlers[custom_id], interaction
                                 )
                         elif data["d"]["type"] == InteractionType.MODAL_SUBMIT.value:
-                            interaction = Interaction(self.session, data["d"], self._auth)
+                            interaction = Interaction(
+                                self.session, data["d"], self._auth
+                            )
                             custom_id = interaction.data.get("custom_id")
                             if custom_id in self._modal_handlers:
                                 await self._trigger(
-                                    self._modal_handlers[custom_id],
-                                    interaction
+                                    self._modal_handlers[custom_id], interaction
                                 )
-                    
+
                     if data["t"] == "MESSAGE_UPDATE":
                         poll = Poll(data["d"].get("poll"))
                         if self._polls_tree.get(poll.question):
@@ -384,8 +407,8 @@ class WebSocket:
                                         tree=data["d"],
                                         session=self.session,
                                         auth=self._auth,
-                                        channel=channel
-                                    )
+                                        channel=channel,
+                                    ),
                                 )
                     if data["t"] == "MESSAGE_DELETE":
                         if "on_message_delete" in self._events_tree:
@@ -395,10 +418,17 @@ class WebSocket:
                         self._guilds[guild_data["id"]] = Guild(id=guild_data["id"])
                         if "channels" in guild_data:
                             for c in guild_data["channels"]:
-                                self._channels[c["id"]] = Channel(tree=c, session=self.session, id=c["id"], auth=self._auth)
+                                self._channels[c["id"]] = Channel(
+                                    tree=c,
+                                    session=self.session,
+                                    id=c["id"],
+                                    auth=self._auth,
+                                )
                     if data["t"] in ("CHANNEL_CREATE", "CHANNEL_UPDATE"):
                         c = data["d"]
-                        self._channels[c["id"]] = Channel(tree=c, session=self.session, id=c["id"], auth=self._auth)
+                        self._channels[c["id"]] = Channel(
+                            tree=c, session=self.session, id=c["id"], auth=self._auth
+                        )
                 elif data["op"] == 7:  # Reconnect & resume
                     await self._reconnect_to_ws()
                     await self._resume()
@@ -440,7 +470,7 @@ class WebSocket:
                     f"Coda: {Fore.RED}Shard {self.shard_id}/{self.shard_count} connection unsuccessful!{Fore.RESET} [{datetime.now(UTC).strftime('%Y-%m-%d %H:%M')}]"
                 )
                 break
-                
+
             except Exception as e:
                 print(
                     f"Coda: {Fore.RED}Shard {self.shard_id}/{self.shard_count} unexpected error: {e}{Fore.RESET} [{datetime.now(UTC).strftime('%Y-%m-%d %H:%M')}]"
@@ -456,7 +486,11 @@ class WebSocket:
                 )
 
     async def change_presence(
-        self, status: PresenceStatus, type: PresenceType = PresenceType.PLAYING, value: str = None, **kwargs
+        self,
+        status: PresenceStatus,
+        type: PresenceType = PresenceType.PLAYING,
+        value: str = None,
+        **kwargs,
     ):
         """
         Change the bot's presence (status and activity).
@@ -470,7 +504,11 @@ class WebSocket:
                         "afk": False,
                         "since": None,
                         "activities": [
-                            {"name": value, "type": type.value, "url": kwargs.get("url")}
+                            {
+                                "name": value,
+                                "type": type.value,
+                                "url": kwargs.get("url"),
+                            }
                         ],
                     },
                 }
@@ -479,19 +517,19 @@ class WebSocket:
 
     async def get_webhook(self, webhook_url: str) -> Webhook:
         return Webhook(self.session, webhook_url)
-    
+
     async def get_channel(self, channel_id: int):
         """
         Retrieve a channel by ID. Checks the local cache first.
         """
         if channel_id in self._channels:
             return self._channels[channel_id]
-            
+
         data = await _request(
             self.session,
             "GET",
             f"{__base_url__}channels/{channel_id}",
-            headers={"Authorization": self._auth}
+            headers={"Authorization": self._auth},
         )
         channel = Channel(
             tree=data, session=self.session, id=data["id"], auth=self._auth
@@ -519,6 +557,7 @@ class WebSocket:
         """
         self._events_tree["on_message"] = coro
         return coro
+
     def on_message_delete(self, coro: callable):
         """
         Decorator to register a message delete event handler.
@@ -530,16 +569,19 @@ class WebSocket:
         """
         Decorator to register a poll end event handler.
         """
+
         def wrapper(coro: callable):
             poll_question_ = poll_question or coro.__name__
             self._polls_tree[poll_question_] = coro
             return coro
+
         return wrapper
 
     def command(self, name: str = None):
         """
         Decorator to register a prefix-based command.
         """
+
         def wrapper(coro: callable):
             func_name = name or coro.__name__
             num_defaults = len(coro.__defaults__) if coro.__defaults__ else 0
@@ -554,44 +596,55 @@ class WebSocket:
 
         return wrapper
 
-    def slash_command(self, name: str = None, description: str = "No description provided", options: List[Option] = None):
+    def slash_command(
+        self,
+        name: str = None,
+        description: str = "No description provided",
+        options: List[Option] = None,
+    ):
         """
         Decorator to register a slash (application) command.
-        
+
         Note: These must be synced with Discord using `.sync_commands()`.
         """
+
         def wrapper(coro: callable):
             cmd_name = name or coro.__name__
             processed_options = []
             if options:
                 for opt in options:
                     processed_options.append(opt.to_dict())
-            
+
             self._slash_commands_tree[cmd_name] = {
                 "coro": coro,
                 "description": description,
                 "name": cmd_name,
-                "options": processed_options
+                "options": processed_options,
             }
             return coro
+
         return wrapper
 
     def component(self, custom_id: str):
         """
         Decorator to register a handler for a specific message component (Button, Select).
         """
+
         def wrapper(coro: callable):
             self._component_handlers[custom_id] = coro
             return coro
+
         return wrapper
 
     def on_modal_submit(self, custom_id: str):
         """
         Decorator to register a handler for a specific modal submission.
         """
+
         def wrapper(coro: callable):
             self._modal_handlers[custom_id] = coro
             return coro
+
         return wrapper
 
     async def sync_commands(self):
@@ -602,14 +655,14 @@ class WebSocket:
             return
 
         url = f"{__base_url__}applications/{self.id}/commands"
-        
+
         # Prepare the payload list for all commands
         commands_payload = [
             {
                 "name": data["name"],
                 "description": data["description"],
                 "type": 1,  # Chat Input
-                "options": data["options"]
+                "options": data["options"],
             }
             for data in self._slash_commands_tree.values()
         ]
@@ -620,11 +673,12 @@ class WebSocket:
             "PUT",
             url,
             json=commands_payload,
-            headers={"Authorization": self._auth}
+            headers={"Authorization": self._auth},
         )
         if resp:
-            print(f"Coda: {Fore.GREEN}Successfully synced {len(commands_payload)} slash commands.{Fore.RESET}")
-
+            print(
+                f"Coda: {Fore.GREEN}Successfully synced {len(commands_payload)} slash commands.{Fore.RESET}"
+            )
 
     async def _trigger(self, target: callable, *args, **kwargs):
         asyncio.create_task(target(*args, **kwargs))
@@ -661,14 +715,14 @@ class Client(WebSocket):
         )
 
     async def register(self):
-        self.session = ClientSession(headers={
+        self.session = ClientSession(
+            headers={
                 "authorization": self._auth,
-                "content-type": "application/json",  
-            })
-
-        gateway_data, client_info = await FetchClientData(
-            self.session, self._auth
+                "content-type": "application/json",
+            }
         )
+
+        gateway_data, client_info = await FetchClientData(self.session, self._auth)
         self.gateway_url = gateway_data["url"]
         self.id = client_info["id"]
         self.user_name = client_info["username"]

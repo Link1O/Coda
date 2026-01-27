@@ -9,18 +9,13 @@ class Poll:
         answers: List[str],
         duration: int,
         allow_multiselect: bool,
-        layout_type: PollLayoutStyle = PollLayoutStyle.DEFAULT
+        layout_type: PollLayoutStyle = PollLayoutStyle.DEFAULT,
     ) -> None:
         question = {
             "text": text[:300],
         }
         poll_answers = [
-            {
-                "answer_id": i + 1,
-                "poll_media": {
-                    "text": answer[:55]
-                }
-            }
+            {"answer_id": i + 1, "poll_media": {"text": answer[:55]}}
             for i, answer in enumerate(answers)
         ]
         self.poll_tree = {

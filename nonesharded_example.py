@@ -15,8 +15,7 @@ async def main():
     @client.on_ready
     async def on_ready_event():
         await client.change_presence(
-            status=PresenceStatus.DND,
-            value=f"running an unsharded Client!"
+            status=PresenceStatus.DND, value=f"running an unsharded Client!"
         )
 
     @client.slash_command()

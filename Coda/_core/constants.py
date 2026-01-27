@@ -1,6 +1,5 @@
 from enum import Enum
 
-
 __base_url__ = "https://discord.com/api/v10/"
 
 
@@ -99,15 +98,9 @@ class PresenceStatus(Enum):
 class AllowedMentions(Enum):
     ROLES = "roles"
     USERS = "users"
-    EVERYONE = "everyone" # Includes @here
-    NOBODY = {
-        "parse": []
-    }
-    SELECTIVE = {
-        "parse": [],
-        "users": [],
-        "roles": []
-    }
+    EVERYONE = "everyone"  # Includes @here
+    NOBODY = {"parse": []}
+    SELECTIVE = {"parse": [], "users": [], "roles": []}
 
 
 class PollLayoutStyle(Enum):
