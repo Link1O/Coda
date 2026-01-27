@@ -7,7 +7,10 @@ from colorama import Fore
 from typing import Union, Iterable, List, NoReturn
 from datetime import datetime, UTC
 from .constants import __base_url__, PresenceStatus, PresenceType, Intents, InteractionType
-from .handlers import Channel, Message, Guild, Interaction, Option, _request, Poll
+from .entities import Channel, Message
+from .interactions import Interaction
+from .models import Guild, Option, Poll
+from .http import _request
 from .exceptions import UnSufficientArguments
 
 

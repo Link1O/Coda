@@ -1,8 +1,19 @@
 from Coda import (
-    ShardedClient, Intents, PresenceStatus, Message, Embed, Poll, Option, 
-    Interaction, ApplicationCommandOptionType, ActionRow, Button, ButtonStyle,
-    StringSelect, SelectOption, RoleSelect, TextInput, TextInputStyle
+    ShardedClient,
+    Intents,
+    PresenceStatus,
+    Message,
+    Interaction,
+    ActionRow,
+    Button,
+    ButtonStyle,
+    StringSelect,
+    SelectOption,
+    RoleSelect,
+    TextInput,
+    TextInputStyle,
 )
+
 import asyncio
 
 sharded_client = ShardedClient(
