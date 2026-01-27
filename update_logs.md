@@ -9,6 +9,7 @@ Version 1.0 - Release
  + improved the shards startup speed (the slowness was due to each shard having to fetch the gatway url and bot info).
  + improved the overall project's type support
  + added the Black python formatter to the project
+ 
 Version 2.0 - Partial interactions support
  + added ObjectBuilder for JSON payload parsing
  + added support for Slash Commands, Buttons, and Modals
