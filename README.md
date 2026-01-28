@@ -13,7 +13,7 @@ High-performance, lightweight Python framework for Discord.
 
 ## Quick Start
 ```python
-from Coda import Client, Intents, PresenceStatus, Interaction
+from Coda import Client, Intents, Event, PresenceStatus, Interaction
 import asyncio
 
 client = Client(
@@ -27,11 +27,10 @@ client = Client(
 async def main():
     await client.register()
 
-    @client.on_ready
+    @client.event(Event.READY)
     async def on_ready_event():
         await client.change_presence(
-            status=PresenceStatus.DND,
-            value=f"running an unsharded Client!"
+            status=PresenceStatus.DND, value=f"running an unsharded Client!"
         )
 
     @client.slash_command()
@@ -44,6 +43,7 @@ async def main():
 loop = asyncio.new_event_loop()
 loop.run_until_complete(main())
 loop.run_forever()
+
 
 ```
 
