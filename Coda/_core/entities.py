@@ -3,10 +3,147 @@ from aiohttp import ClientSession
 from .constants import __base_url__, AllowedMentions
 from .embed_base import Embed
 from .payloads import MessagePayload
-from .components_base import ActionRow
+from .components import ActionRow
 from .exceptions import *
 from .http import _request
-from .models import ObjectBuilder, Author, Poll  # Import from models
+from .models import ObjectBuilder, Poll
+
+
+class Guild:
+    """
+    Represents a shorthand Discord Guild object.
+    """
+
+    def __init__(self, **kwargs) -> None:
+        self.id = kwargs["id"]
+
+
+class Channel(ObjectBuilder):
+    """
+    Represents a Discord Channel.
+    """
+
+    id: str
+    type: int
+    last_message_id: str
+    flags: int
+    guild_id: str
+    name: str
+    parent_id: Optional[str]
+    rate_limit_per_user: int
+    topic: Optional[str]
+    position: int
+    permission_overwrites: List
+    nsfw: bool
+
+    def __init__(self, tree, **kwargs) -> None:
+        super().__init__(tree)
+        self.id = kwargs["id"]
+        self._session = kwargs["session"]
+        self._auth = kwargs["auth"]
+        self.kwargs = kwargs
+
+    async def get_message(self, message_id):
+        """
+        Retrieve a specific message from this channel by ID.
+        """
+        data = await _request(
+            self._session,
+            "GET",
+            f"{__base_url__}channels/{self.id}/messages/{message_id}",
+            headers={"Authorization": self.kwargs["auth"]},
+        )
+        return Message(
+            tree=data,
+            session=self._session,
+            auth=self._auth,
+            channel=self,
+        )
+
+    async def send(
+        self,
+        content: str = None,
+        embeds: List[Embed] = None,
+        sticker_ids: List[str] = None,
+        poll: Poll = None,
+        allowed_mentions: AllowedMentions = None,
+        reference_message_id: str = None,
+        components: List[ActionRow] = None,
+    ):
+        """
+        Send a message to this channel.
+        """
+        if not any([content, embeds, sticker_ids, poll, components]):
+            raise ValueError("No arguments provided")
+        payload = MessagePayload(
+            content=content,
+            embeds=embeds,
+            sticker_ids=sticker_ids,
+            poll=poll,
+            allowed_mentions=allowed_mentions,
+            reference_message_id=reference_message_id,
+            components=components,
+        ).payload_tree
+        data = await _request(
+            self._session,
+            "POST",
+            f"{__base_url__}channels/{self.id}/messages",
+            json=payload,
+        )
+        return Message(
+            tree=data,
+            session=self._session,
+            auth=self._auth,
+            channel=self,
+        )
+
+    async def delete(self):
+        """
+        Delete this channel.
+        """
+        await _request(self._session, "DELETE", f"{__base_url__}channels/{self.id}")
+        return True
+
+    async def get_pins(self, before: str = None, limit: int = None):
+        """
+        Retrieve all pinned messages in the channel.
+
+        This method fetches a list of messages that have been pinned in the current channel.
+        The Discord API limits pinned messages to a maximum of 50 per channel.
+        """
+        data = await _request(
+            self._session,
+            "GET",
+            f"{__base_url__}channels/{self.id}/pins",
+            json={"before": before, "limit": limit},
+        )
+        return [
+            Message(tree=pin, session=self._session, auth=self._auth, channel=self)
+            for pin in data
+        ]
+
+
+class Author:
+    """
+    Represents a Discord User/Author object.
+    """
+
+    id: str
+    username: str
+    avatar: Optional[str]
+    discriminator: str
+    public_flags: int
+    flags: int
+    bot: bool
+    banner: Optional[str]
+    accent_color: Optional[int]
+    global_name: Optional[str]
+    avatar_decoration_data: Optional[Any]
+    collectibles: Optional[Any]
+    display_name_styles: Optional[Any]
+    banner_color: Optional[int]
+    clan: Optional[Any]
+    primary_guild: Optional[Any]
 
 
 class Message(ObjectBuilder):
@@ -43,8 +180,6 @@ class Message(ObjectBuilder):
         self._session = session
         self._auth = auth
         self.channel = channel
-        self.pinned = None
-        self.reactions = None
         self._interaction_token = kwargs.get("interaction_token")
         self._application_id = kwargs.get("application_id")
 
@@ -251,108 +386,3 @@ class Message(ObjectBuilder):
             f"{__base_url__}channels/{self.channel.id}/messages/{self.id}/reactions/{emoji}",
         )
         return self.reactions
-
-
-class Channel(ObjectBuilder):
-    """
-    Represents a Discord Channel.
-    """
-
-    id: str
-    type: int
-    last_message_id: str
-    flags: int
-    guild_id: str
-    name: str
-    parent_id: Optional[str]
-    rate_limit_per_user: int
-    topic: Optional[str]
-    position: int
-    permission_overwrites: List
-    nsfw: bool
-
-    def __init__(self, tree, **kwargs) -> None:
-        super().__init__(tree)
-        self.id = kwargs["id"]
-        self._session = kwargs["session"]
-        self._auth = kwargs["auth"]
-        self.kwargs = kwargs
-
-    async def get_message(self, message_id):
-        """
-        Retrieve a specific message from this channel by ID.
-        """
-        data = await _request(
-            self._session,
-            "GET",
-            f"{__base_url__}channels/{self.id}/messages/{message_id}",
-            headers={"Authorization": self.kwargs["auth"]},
-        )
-        return Message(
-            tree=data,
-            session=self._session,
-            auth=self._auth,
-            channel=self,
-        )
-
-    async def send(
-        self,
-        content: str = None,
-        embeds: List[Embed] = None,
-        sticker_ids: List[str] = None,
-        poll: Poll = None,
-        allowed_mentions: AllowedMentions = None,
-        reference_message_id: str = None,
-        components: List[ActionRow] = None,
-    ):
-        """
-        Send a message to this channel.
-        """
-        if not any([content, embeds, sticker_ids, poll, components]):
-            raise ValueError("No arguments provided")
-        payload = MessagePayload(
-            content=content,
-            embeds=embeds,
-            sticker_ids=sticker_ids,
-            poll=poll,
-            allowed_mentions=allowed_mentions,
-            reference_message_id=reference_message_id,
-            components=components,
-        ).payload_tree
-        data = await _request(
-            self._session,
-            "POST",
-            f"{__base_url__}channels/{self.id}/messages",
-            json=payload,
-        )
-        return Message(
-            tree=data,
-            session=self._session,
-            auth=self._auth,
-            channel=self,
-        )
-
-    async def delete(self):
-        """
-        Delete this channel.
-        """
-        await _request(self._session, "DELETE", f"{__base_url__}channels/{self.id}")
-        return True
-
-    async def get_pins(self, before: str = None, limit: int = None):
-        """
-        Retrieve all pinned messages in the channel.
-
-        This method fetches a list of messages that have been pinned in the current channel.
-        The Discord API limits pinned messages to a maximum of 50 per channel.
-        """
-        data = await _request(
-            self._session,
-            "GET",
-            f"{__base_url__}channels/{self.id}/pins",
-            json={"before": before, "limit": limit},
-        )
-        return [
-            Message(tree=pin, session=self._session, auth=self._auth, channel=self)
-            for pin in data
-        ]

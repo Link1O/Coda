@@ -1,4 +1,4 @@
-from Coda import Client, Intents, PresenceStatus, Interaction
+from Coda import Client, Intents, Event, PresenceStatus, Interaction
 import asyncio
 
 client = Client(
@@ -12,7 +12,7 @@ client = Client(
 async def main():
     await client.register()
 
-    @client.on_ready
+    @client.event(Event.READY)
     async def on_ready_event():
         await client.change_presence(
             status=PresenceStatus.DND, value=f"running an unsharded Client!"

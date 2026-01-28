@@ -1,6 +1,7 @@
 from Coda import (
     ShardedClient,
     Intents,
+    Event,
     PresenceStatus,
     Message,
     Interaction,
@@ -29,14 +30,14 @@ async def main():
     await sharded_client.register()
 
     def bind_handlers(shard):
-        @shard.on_ready
+        @shard.event(Event.READY)
         async def on_ready_event():
             print(f"Shard {shard.shard_id} is ready!")
             await shard.change_presence(
                 status=PresenceStatus.DND, value=f"shard no: {shard.shard_id}"
             )
 
-        @shard.on_poll_end
+        @shard.event(Event.POLL_END)
         async def on_poll_end_event(ctx: Message):
             print(f"Poll {ctx.content} ended!")
 

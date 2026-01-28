@@ -10,12 +10,13 @@ from .constants import (
     __base_url__,
     PresenceStatus,
     PresenceType,
+    Event,
     Intents,
     InteractionType,
 )
-from .entities import Channel, Message
+from .entities import Guild, Channel, Message, Poll
 from .interactions import Interaction
-from .models import Guild, Option, Poll
+from .interactions import Option
 from .http import _request
 from .exceptions import UnSufficientArguments
 
@@ -396,23 +397,52 @@ class WebSocket:
                                 )
 
                     if data["t"] == "MESSAGE_UPDATE":
-                        poll = Poll(data["d"].get("poll"))
-                        if self._polls_tree.get(poll.question):
-                            if poll and poll.results.is_finalized:
-                                channel = self.get_channel(data["d"]["channel_id"])
-                                await self._trigger(
-                                    self._polls_tree[poll.question],
-                                    poll,
-                                    Message(
-                                        tree=data["d"],
-                                        session=self.session,
-                                        auth=self._auth,
-                                        channel=channel,
-                                    ),
+                        if data["d"].get("poll"):
+                            if (
+                                has_event := self._events_tree.get("on_poll_end")
+                                or self._polls_tree
+                            ):
+                                poll = Poll(data["d"]["poll"])
+                                channel = await self.get_channel(
+                                    data["d"]["channel_id"]
                                 )
+                                if has_event:
+                                    if poll.results.is_finalized:
+                                        await self._trigger(
+                                            self._events_tree["on_poll_end"],
+                                            poll,
+                                            Message(
+                                                tree=data["d"],
+                                                session=self.session,
+                                                auth=self._auth,
+                                                channel=channel,
+                                            ),
+                                        )
+                                if self._polls_tree.get(poll.question):
+                                    if poll.results.is_finalized:
+                                        await self._trigger(
+                                            self._polls_tree[poll.question],
+                                            poll,
+                                            Message(
+                                                tree=data["d"],
+                                                session=self.session,
+                                                auth=self._auth,
+                                                channel=channel,
+                                            ),
+                                        )
+
                     if data["t"] == "MESSAGE_DELETE":
                         if "on_message_delete" in self._events_tree:
-                            await self._trigger("")
+                            channel = await self.get_channel(data["d"]["channel_id"])
+                            await self._trigger(
+                                self._events_tree["on_message_delete"],
+                                Message(
+                                    tree=data["d"],
+                                    session=self.session,
+                                    auth=self._auth,
+                                    channel=channel,
+                                ),
+                            )
                     if data["t"] in ("GUILD_CREATE", "GUILD_UPDATE"):
                         guild_data = data["d"]
                         self._guilds[guild_data["id"]] = Guild(id=guild_data["id"])
@@ -537,37 +567,20 @@ class WebSocket:
         self._channels[channel_id] = channel
         return channel
 
-    def on_setup(self, coro: callable):
+    def event(self, event_name: Event):
         """
-        Decorator to register a setup event handler.
+        Decorator to register an event handler.
         """
-        self._events_tree["on_setup"] = coro
-        return coro
 
-    def on_ready(self, coro: callable):
-        """
-        Decorator to register a ready event handler.
-        """
-        self._events_tree["on_ready"] = coro
-        return coro
+        def wrapper(coro: callable):
+            self._events_tree[event_name] = coro
+            return coro
 
-    def on_message(self, coro: callable):
-        """
-        Decorator to register a message event handler.
-        """
-        self._events_tree["on_message"] = coro
-        return coro
-
-    def on_message_delete(self, coro: callable):
-        """
-        Decorator to register a message delete event handler.
-        """
-        self._events_tree["on_message_delete"] = coro
-        return coro
+        return wrapper
 
     def on_poll_end(self, poll_question: str = None):
         """
-        Decorator to register a poll end event handler.
+        Decorator to register a 'specefic' poll end event handler.
         """
 
         def wrapper(coro: callable):

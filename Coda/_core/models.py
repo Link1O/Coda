@@ -25,38 +25,6 @@ class ObjectBuilder:
         return f"<ObjectBuilder {self.__dict__}>"
 
 
-class Author:
-    """
-    Represents a Discord User/Author object.
-    """
-
-    id: str
-    username: str
-    avatar: Optional[str]
-    discriminator: str
-    public_flags: int
-    flags: int
-    bot: bool
-    banner: Optional[str]
-    accent_color: Optional[int]
-    global_name: Optional[str]
-    avatar_decoration_data: Optional[Any]
-    collectibles: Optional[Any]
-    display_name_styles: Optional[Any]
-    banner_color: Optional[int]
-    clan: Optional[Any]
-    primary_guild: Optional[Any]
-
-
-class Guild:
-    """
-    Represents a shorthand Discord Guild object.
-    """
-
-    def __init__(self, **kwargs) -> None:
-        self.id = kwargs["id"]
-
-
 class PollMedia:
     text: str
     emoji: Optional[Any]

@@ -95,6 +95,14 @@ class PresenceStatus(Enum):
     INVISIBLE = "invisible"
 
 
+class Event(Enum):
+    READY = "on_ready"
+    SETUP = "on_setup"
+    MESSAGE = ("on_message",)
+    MESSAGE_DELETE = ("on_message_delete",)
+    POLL_END = "on_poll_end"
+
+
 class AllowedMentions(Enum):
     ROLES = "roles"
     USERS = "users"
