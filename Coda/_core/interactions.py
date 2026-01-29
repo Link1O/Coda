@@ -9,6 +9,7 @@ from .constants import (
 )
 from .payloads import InteractionPayload
 from .entities import Guild, Channel, Message
+from .models import Poll
 from .components import ActionRow
 from .http import _request
 
@@ -21,8 +22,8 @@ class Option:
     def __init__(
         self,
         name: str,
-        description: str,
         type: ApplicationCommandOptionType,
+        description: str = "---",
         required: bool = False,
     ):
         self.name = name
@@ -104,18 +105,19 @@ class Interaction:
         content: str = None,
         embeds: list = None,
         ephemeral: bool = False,
+        poll: Poll = None,
         components: List[ActionRow] = None,
     ):
         """
         Respond to the interaction with a message.
         """
-        from .entities import Message  # Local import
 
         payload = InteractionPayload(
             type=InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
             content=content,
             embeds=embeds,
             ephemeral=ephemeral,
+            poll=poll,
             components=components,
         ).payload_tree
 
@@ -189,7 +191,6 @@ class Interaction:
         """
         Send a follow-up message.
         """
-        from .entities import Message  # Local import
 
         payload = InteractionPayload(
             content=content, embeds=embeds, ephemeral=ephemeral, components=components

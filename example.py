@@ -3,7 +3,7 @@ from Coda import (
     Intents,
     Event,
     PresenceStatus,
-    Message,
+    PollObject,
     Interaction,
     ActionRow,
     Button,
@@ -38,8 +38,8 @@ async def main():
             )
 
         @shard.event(Event.POLL_END)
-        async def on_poll_end_event(ctx: Message):
-            print(f"Poll {ctx.content} ended!")
+        async def on_poll_end_event(poll: PollObject):
+            print(f"The poll with the question: '{poll.question}' ended!")
 
         @shard.slash_command(name="button", description="send a button")
         async def send_button(ctx: Interaction):

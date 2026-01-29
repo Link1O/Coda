@@ -1,4 +1,5 @@
-from typing import Any, Dict, Optional
+from enum import Enum
+from typing import Any, Dict, List, Optional
 from .constants import PollLayoutStyle
 
 
@@ -25,35 +26,85 @@ class ObjectBuilder:
         return f"<ObjectBuilder {self.__dict__}>"
 
 
-class PollMedia:
+class Embed:
+    def __init__(
+        self,
+        title: str,
+        description: str,
+        color=None,
+        image: str = None,
+        timestamp=None,
+    ) -> None:
+        self.tree = {
+            "title": title,
+            "description": description,
+            "color": color.value if isinstance(color, Enum) else color or None,
+            "image": {"url": image},
+            "fields": [],
+        }
+        if timestamp:
+            self.embed_tree["timestamp"] = timestamp
+
+    async def add_field(self, name: str, value: str, inline: bool):
+        self.embed_tree["fields"].append(
+            {"name": name, "value": value, "inline": inline}
+        )
+
+
+class PollMediaObject:
     text: str
     emoji: Optional[Any]
 
 
-class PollAnswers:
+class PollAnswersObject:
     text: str
     emoji: Optional[Any]
 
 
-class PollAnswerCount:
+class PollAnswerCountObject:
     id: int
     count: int
     me_voted: bool
 
 
-class PollResults:
+class PollResultsObject:
     is_finalized: bool
-    answer_counts: PollAnswerCount
+    answer_counts: PollAnswerCountObject
 
 
-class Poll(ObjectBuilder):
+class PollObject(ObjectBuilder):
     """
     Represents a Discord Poll object
     """
 
     question: str
-    answers: PollAnswers
+    answers: PollAnswersObject
     expiry: str
     allow_multiselect: bool
     layout_type: PollLayoutStyle
-    results: PollResults
+    results: PollResultsObject
+
+
+class Poll:
+    def __init__(
+        self,
+        text: str,
+        answers: List[str],
+        duration: int,
+        allow_multiselect: bool,
+        layout_type: PollLayoutStyle = PollLayoutStyle.DEFAULT,
+    ) -> None:
+        question = {
+            "text": text[:300],
+        }
+        poll_answers = [
+            {"answer_id": i + 1, "poll_media": {"text": answer[:55]}}
+            for i, answer in enumerate(answers)
+        ]
+        self.poll_tree = {
+            "question": question,
+            "answers": poll_answers,
+            "duration": int(duration),
+            "allow_multiselect": allow_multiselect,
+            "layout_type": layout_type.value,
+        }

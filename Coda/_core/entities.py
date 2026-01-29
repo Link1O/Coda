@@ -1,8 +1,8 @@
 from typing import Union, List, Dict, Any, Optional
 from aiohttp import ClientSession
 from .constants import __base_url__, AllowedMentions
-from .embed_base import Embed
-from .payloads import MessagePayload
+from .models import Embed
+from .payloads import MessagePayload, InteractionPayload
 from .components import ActionRow
 from .exceptions import *
 from .http import _request
@@ -199,10 +199,6 @@ class Message(ObjectBuilder):
         automatically be sent as an interaction follow-up. Otherwise,
         it sends a standard message reply.
         """
-        from .payloads import (
-            InteractionPayload,
-        )  # Local import to avoid circular dependency
-
         if not any([content, embeds, sticker_ids, poll, components]):
             raise ValueError("No arguments provided")
 

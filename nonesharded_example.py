@@ -19,8 +19,8 @@ async def main():
         )
 
     @client.slash_command()
-    async def hello(ctx: Interaction):
-        await ctx.reply("Hello, world")
+    async def poll(ctx: Interaction):
+        await ctx.respond("Hello, world")
 
     await client.connect()
 

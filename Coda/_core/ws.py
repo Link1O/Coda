@@ -14,9 +14,9 @@ from .constants import (
     Intents,
     InteractionType,
 )
-from .entities import Guild, Channel, Message, Poll
-from .interactions import Interaction
-from .interactions import Option
+from .entities import Guild, Channel, Message
+from .models import PollObject
+from .interactions import Interaction, Option
 from .http import _request
 from .exceptions import UnSufficientArguments
 
@@ -402,7 +402,7 @@ class WebSocket:
                                 has_event := self._events_tree.get("on_poll_end")
                                 or self._polls_tree
                             ):
-                                poll = Poll(data["d"]["poll"])
+                                poll = PollObject(data["d"]["poll"])
                                 channel = await self.get_channel(
                                     data["d"]["channel_id"]
                                 )
@@ -470,7 +470,7 @@ class WebSocket:
                     return
                 elif data["op"] == 9:  # Invalid session
                     print(
-                        f"Coda: {Fore.YELLOW}Shard {self.shard_id}/{self.shard_count} invalid session"
+                        f"Coda: {Fore.YELLOW}Shard {self.shard_id}/{self.shard_count} invalid session{Fore.RESET} [{datetime.now(UTC).strftime('%Y-%m-%d %H:%M')}]"
                     )
                     if data["d"]:
                         await self._resume()
@@ -567,13 +567,13 @@ class WebSocket:
         self._channels[channel_id] = channel
         return channel
 
-    def event(self, event_name: Event):
+    def event(self, event: Event):
         """
         Decorator to register an event handler.
         """
 
         def wrapper(coro: callable):
-            self._events_tree[event_name] = coro
+            self._events_tree[event.value] = coro
             return coro
 
         return wrapper
@@ -612,7 +612,7 @@ class WebSocket:
     def slash_command(
         self,
         name: str = None,
-        description: str = "No description provided",
+        description: str = "---",
         options: List[Option] = None,
     ):
         """
