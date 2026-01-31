@@ -1,8 +1,12 @@
 from Coda import Client, Intents, Event, PresenceStatus, Interaction
 import asyncio
+from dotenv import load_dotenv
+from os import environ
+
+load_dotenv()
 
 client = Client(
-    "YOUR_TOKEN",
+    str(environ.get("TOKEN")),
     intents=Intents.ALL,
     prefix="!",
     debug=True,
@@ -19,8 +23,9 @@ async def main():
         )
 
     @client.slash_command()
-    async def poll(ctx: Interaction):
-        await ctx.respond("Hello, world")
+    async def hello(ctx: Interaction):
+        message = await ctx.respond("Hello, world")
+        await message.author.test()
 
     await client.connect()
 

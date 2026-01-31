@@ -16,9 +16,13 @@ from Coda import (
 )
 
 import asyncio
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 sharded_client = ShardedClient(
-    "YOUR_TOKEN",
+    str(os.environ.get("TOKEN")),
     intents=Intents.ALL,
     prefix="s!",
     shard_count=2,
