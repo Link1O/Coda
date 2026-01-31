@@ -25,7 +25,6 @@ async def main():
     @client.slash_command()
     async def hello(ctx: Interaction):
         message = await ctx.respond("Hello, world")
-        await message.author.test()
 
     await client.connect()
 
