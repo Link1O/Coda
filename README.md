@@ -9,7 +9,16 @@ High-performance, lightweight Python framework for Discord.
 - **Performance**: Low memory footprint and `orjson` integration.
 
 ## Install
-`pip install git+https://github.com/Link1O/Coda.git`
+
+### Stable release
+```
+pip install git+https://github.com/Link1O/Coda.git@v2.1.2
+```
+
+### Rolling release
+```
+pip install git+https://github.com/Link1O/Coda.git
+```
 
 ## Quick Start
 ```python
@@ -47,5 +56,11 @@ loop.run_forever()
 
 ```
 
-### Citation
-Langa, Ł., & contributors to Black. *Black: The uncompromising Python code formatter* [Computer software]. https://github.com/psf/black
+## Credits / Dependencies
+This project uses the following libraries:
+
+- [aiohttp](https://docs.aiohttp.org/) – Asynchronous HTTP client/server library for Python.
+- [Cython](https://cython.org/) – Python language extension for writing C-like performance code.
+- [orjson](https://github.com/ijl/orjson) – A fast JSON parsing and serialization library.
+- [colorama](https://github.com/tartley/colorama) – Cross-platform library for colored terminal text.
+- [Black](https://github.com/psf/black) – Python code formatter.
